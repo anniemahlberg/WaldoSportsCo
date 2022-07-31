@@ -48,7 +48,8 @@ usersRouter.post('/login', async (req, res, next) => {
 });
 
 usersRouter.post('/register', async (req, res, next) => {
-    const { username, password, name, location } = req.body;
+    const { username, password, firstname, lastname, email, venmo } = req.body;
+    console.log(req.body)
 
     try {
         const _user = await getUserByUsername(username);
@@ -61,7 +62,7 @@ usersRouter.post('/register', async (req, res, next) => {
         }
 
         const user = await createUser({
-            username, password, name, location
+            username, password, firstname, lastname, email, venmo
         });
 
         const token = jwt.sign({ id: user.id, username }, JWT_SECRET, {expiresIn: '1w'});
