@@ -1,6 +1,7 @@
 const express = require('express');
 const apiRouter = express.Router();
 const usersRouter = require('./users');
+const gamesRouter = require('./games');
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../db');
 const { JWT_SECRET } = process.env;
@@ -41,6 +42,7 @@ apiRouter.use((req, res, next) => {
 });
 
 apiRouter.use('/users', usersRouter);
+apiRouter.use('/games', gamesRouter);
 
 apiRouter.use((error, req, res, next) => {
     res.send({
