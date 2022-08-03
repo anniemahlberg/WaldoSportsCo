@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const bcrypt = require('bcrypt')
 
 const client = new Client({
     connectionString: process.env.DATABASE_URL || 'postgres://localhost:5432/waldosportsco',
@@ -6,13 +7,15 @@ const client = new Client({
 });
 
 async function createUser({ username, password, firstname, lastname, email, venmo }) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     try {
         const { rows: [ user ] } = await client.query(`
             INSERT INTO users(username, password, firstname, lastname, email, venmo)
             VALUES ($1, $2, $3, $4, $5, $6)
             ON CONFLICT (username) DO NOTHING
             RETURNING *;
-        `, [username, password, firstname, lastname, email, venmo]);
+        `, [username, hashedPassword, firstname, lastname, email, venmo]);
         return user;
     } catch (error) {
         throw error;
