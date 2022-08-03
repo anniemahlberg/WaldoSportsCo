@@ -26,11 +26,11 @@ gamesRouter.get('/:gameId', async (req, res) => {
 });
 
 gamesRouter.post('/add', async (req, res, next) => {
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line } = req.body;
+    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
 
     try {
         const game = await createGame({
-            hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line
+            hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line
         });
 
         res.send({ message: 'you have added a new game!', game});
@@ -41,13 +41,13 @@ gamesRouter.post('/add', async (req, res, next) => {
 
 gamesRouter.patch('/:gameId', async (req, res, next) => {
     const { gameId } = req.params;
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line } = req.body;
+    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
 
     try {
         const game = await getGameById(gameId);
 
         if (game) {
-            let updatedGame = await updateGame(gameId, { hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line })
+            let updatedGame = await updateGame(gameId, { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line })
 
             res.send({ game: updatedGame });
         } else {

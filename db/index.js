@@ -90,13 +90,13 @@ async function getUserByUsername(username) {
     }
 }
 
-async function createGame({ hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line }) {
+async function createGame({ hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line }) {
     try {
         const { rows: [ game ] } = await client.query(`
-            INSERT INTO games(hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            INSERT INTO games(hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
             RETURNING *;
-        `, [hometeam, awayteam, level, date, time, primetime, value, duration, options, totalpoints, favoredteam, line]);
+        `, [hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line]);
         return game;
     } catch (error) {
         throw error;
