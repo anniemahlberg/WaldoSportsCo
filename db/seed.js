@@ -90,7 +90,9 @@ try {
     console.log("getAllUsers: ", users);
     console.log('Got users!');
 
-    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "saturday", time: "12:00", duration: "full-game", options: ['over', 'under', 'chalk', 'dog'], totalpoints: 27.5, favoredteam: "chiefs", line: 7.5, primetime: false, value: 1});
+    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
+    await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
+    await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
     
     const games = await getAllGames();
     console.log("games: ", games)
