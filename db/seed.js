@@ -1,17 +1,25 @@
-const { client,
+const client = require('./client');
+
+const {
     getAllUsers,
     createUser,
     updateUser,
     getUserById,
     createGame,
     getAllGames,
-    updateGame
+    updateGame,
+    createPicks,
+    getAllPicks,
+    getPicksByUsername,
+    updatePicks,
+    addOutcomesToPicks
 } = require('./index');
 
 async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
+        DROP TABLE IF EXISTS picks;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS games;
     `);
@@ -62,6 +70,17 @@ try {
         );
     `)
 
+    await client.query(`
+        CREATE TABLE picks (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) REFERENCES users(username),
+            picks VARCHAR(255) ARRAY,
+            outcomes VARCHAR(255) ARRAY,
+            parlays VARCHAR(255) [][],
+            "parlaysOutcomes" VARCHAR(255) [][]
+        );
+    `)
+
     console.log('Finished building tables!')
 } catch (error) {
     console.error('Error building tables!')
@@ -85,18 +104,20 @@ try {
 
     await createUser({username: 'annie123', password: 'pass123', firstname: 'annie', lastname: 'mahl', email: 'annie@email.com', venmo: 'venmouser'})
 
-    console.log('GETTING USERS');
-    const users = await getAllUsers();
-    console.log("getAllUsers: ", users);
-    console.log('Got users!');
-
     await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
     await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
     await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
-    
-    const games = await getAllGames();
-    console.log("games: ", games)
 
+    await createPicks({username: 'annie123', picks: ['raiders vs. chiefs over 27.5', 'austin fc +2.5'], parlays: [['chiefs -7.5', 'yankees vs. royals under 5.5'], ['austin fc +2.5', 'chiefs -7.5']]})
+
+    const allPicks = await getAllPicks();
+    // console.log(allPicks)
+
+    
+    const annieUpdated = await updatePicks(1, {picks: ['raiders vs. chiefs under 27.5', 'sporting kc -2.5']})
+    // const addingOutcomes = await addOutcomesToPicks(1, {outcomes: ['hit', 'hit'], parlaysOutcomes:[['miss'], ['hit']]})
+    const anniePicks = await getPicksByUsername('annie123')
+    console.log(anniePicks)
 } catch (error) {
     console.error("Error testing database!");
     throw error;

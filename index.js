@@ -3,7 +3,7 @@ const { PORT = 3000 } = process.env;
 const express = require('express');
 const server = express();
 const morgan = require('morgan');
-const { client } = require('./db');
+const client = require('./db/client');
 const apiRouter = require('./api');
 const cors = require('cors');
 
