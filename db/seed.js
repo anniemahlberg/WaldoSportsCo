@@ -109,15 +109,6 @@ try {
     await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
 
     await createPicks({username: 'annie123', picks: ['raiders vs. chiefs over 27.5', 'austin fc +2.5'], parlays: [['chiefs -7.5', 'yankees vs. royals under 5.5'], ['austin fc +2.5', 'chiefs -7.5']]})
-
-    const allPicks = await getAllPicks();
-    // console.log(allPicks)
-
-    
-    const annieUpdated = await updatePicks(1, {picks: ['raiders vs. chiefs under 27.5', 'sporting kc -2.5']})
-    // const addingOutcomes = await addOutcomesToPicks(1, {outcomes: ['hit', 'hit'], parlaysOutcomes:[['miss'], ['hit']]})
-    const anniePicks = await getPicksByUsername('annie123')
-    console.log(anniePicks)
 } catch (error) {
     console.error("Error testing database!");
     throw error;
