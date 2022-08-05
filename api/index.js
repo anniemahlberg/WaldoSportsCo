@@ -27,19 +27,10 @@ apiRouter.use(async (req, res, next) => {
         }
     } else {
         next({
-            name: 'AuthorizationHeaderError',
-            message: `Authorization token must start with ${ prefix }`
+            name: 'MissingUserError',
+            message: `You must be logged in to perform this action!`
         });
     }
-});
-
-
-apiRouter.use((req, res, next) => {
-    if (req.user) {
-        console.log("User is set:", req.user);
-    }
-
-    next();
 });
 
 apiRouter.use('/users', usersRouter);
