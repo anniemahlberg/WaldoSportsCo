@@ -1,5 +1,6 @@
 const express = require('express');
 const { getAllPicks, getPickById, updatePicks, addOutcomesToPicks, getPicksByUsername, createPicks } = require('../db');
+const { requireUser } = require('./utils');
 const picksRouter = express.Router();
 
 picksRouter.use((req, res, next) => {
@@ -35,11 +36,11 @@ picksRouter.get('/username/:username', async (req, res) => {
     });
 });
 
-picksRouter.post('/addPick', async (req, res, next) => {
-    const { username, picks, parlays } = req.body;
+picksRouter.post('/addPick', requireUser, async (req, res, next) => {
+    const { picks, parlays } = req.body;
 
     try {
-        const pick = await createPicks({ username, picks, parlays });
+        const pick = await createPicks({ username: req.user.username, picks, parlays });
         res.send({ message: 'You have made your picks!', pick});
     } catch ({ name, message }) {
         next({ name, message })
@@ -49,13 +50,17 @@ picksRouter.post('/addPick', async (req, res, next) => {
 picksRouter.patch('/id/:pickId/updatePick', async (req, res, next) => {
     const { pickId } = req.params;
     const { picks, parlays } = req.body;
-
+    
     try {
         const pick = await getPickById(pickId);
-
-        if (pick) {
+        if (pick && pick.username === req.user.username) {
             let updatedPick = await updatePicks(pickId, { picks, parlays })
             res.send({ pick: updatedPick });
+        } else if (pick && pick.username !== req.user) {
+            next({
+                name: 'UnauthorizedUserError',
+                message: 'You cannot edit a pick that is not yours'
+            })
         } else {
             next({
                 name: 'PickNotFoundError',
@@ -74,7 +79,7 @@ picksRouter.patch('/id/:pickId/updateOutcomes', async (req, res, next) => {
     try {
         const pick = await getPickById(pickId);
 
-        if (pick) {
+        if (pick && req.user.username) {
             let updatedPick = await addOutcomesToPicks(pickId, { outcomes, parlaysOutcomes })
             res.send({ pick: updatedPick });
         } else {

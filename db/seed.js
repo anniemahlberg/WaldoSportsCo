@@ -103,12 +103,15 @@ try {
     console.log('STARTING DATABASE');
 
     await createUser({username: 'annie123', password: 'pass123', firstname: 'annie', lastname: 'mahl', email: 'annie@email.com', venmo: 'venmouser'})
+    await createUser({username: 'nicktynick', password: 'pass123', firstname: 'nick', lastname: 'han', email: 'nick@email.com', venmo: 'venmouser2'})
 
     await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
     await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
     await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
 
     await createPicks({username: 'annie123', picks: ['raiders vs. chiefs over 27.5', 'austin fc +2.5'], parlays: [['chiefs -7.5', 'yankees vs. royals under 5.5'], ['austin fc +2.5', 'chiefs -7.5']]})
+    await createPicks({username: 'nicktynick', picks: ['raiders vs. chiefs under 27.5', 'sporting kc -2.5'], parlays: ['raiders +7.5', 'yankees vs. royals over 5.5']})
+
 } catch (error) {
     console.error("Error testing database!");
     throw error;
