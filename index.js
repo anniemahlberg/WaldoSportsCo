@@ -14,6 +14,10 @@ const corsOptions = {
 };
 
 server.use(cors(corsOptions));
+server.get('/', (req, res) => {
+    res.send('CORS solved')
+  })
+
 server.use(morgan('dev'));
 server.use(express.json());
 server.use('/api', apiRouter);
