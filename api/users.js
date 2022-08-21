@@ -1,18 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername, createUser } = require('../db');
+const { getAllUsers, getUserByUsername, createUser, getUserById } = require('../db');
+const { requireUser } = require('./utils')
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
 
-usersRouter.use((req, res, next) => {
-    console.log('A request is being made to /users');
-    next();
-});
-
 usersRouter.get('/', async (req, res) => {
     const users = await getAllUsers();
-
     res.send({
         users
     });
@@ -35,7 +30,7 @@ usersRouter.post('/login', async (req, res, next) => {
         const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET)
 
         if (user && isValid) {
-            res.send({ message: "you're logged in!", token: token, user })
+            res.send({ message: "you're logged in!", token: token, user})
         } else {
             next({
                 name: 'IncorrectCredentialsError',
@@ -62,8 +57,9 @@ usersRouter.post('/register', async (req, res, next) => {
             });
         }
 
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = await createUser({
-            username, password, firstname, lastname, email, venmo
+            username, password:hashedPassword, firstname, lastname, email, venmo
         });
 
         const token = jwt.sign({ id: user.id, username }, JWT_SECRET, {expiresIn: '1w'});
@@ -72,6 +68,64 @@ usersRouter.post('/register', async (req, res, next) => {
     } catch ({ name, message }) {
         next({ name, message })
     }
-});    
+}); 
+
+usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
+    const { userId } = req.params;
+    const { username, password, firstname, lastname, email, venmo, active, admin } = req.body;
+    let updateFields = {}
+
+    if (username) {
+        updateFields.username = username;
+    }
+
+    if (password) {
+        updateFields.password = password;
+    }
+
+    if (firstname) {
+        updateFields.firstname = firstname;
+    }
+
+    if (lastname) {
+        updateFields.lastname = lastname;
+    }
+
+    if (email) {
+        updateFields.email = email;
+    }
+
+    if (venmo) {
+        updateFields.venmo = venmo;
+    }
+
+    if (active) {
+        updateFields.active = active;
+    }
+
+    if (admin) {
+        updateFields.admin = admin;
+    }
+    
+    try {
+        const user = await getUserById(userId);
+        if (user && user.username === req.user.username) {
+            let updatedUser = await updatePicks(userId, updateFields)
+            res.send({ user: updatedUser });
+        } else if (user && user.username !== req.user.username) {
+            next({
+                name: 'UnauthorizedUserError',
+                message: 'You cannot edit a user that is not your'
+            })
+        } else {
+            next({
+                name: 'UserNotFoundError',
+                message: 'That user does not exist'
+            });
+        }
+    } catch ({ name, message }) {
+        next({ name, message });
+    }
+})
 
 module.exports = usersRouter;

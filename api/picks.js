@@ -1,12 +1,7 @@
 const express = require('express');
 const { getAllPicks, getPickById, updatePicks, addOutcomesToPicks, getPicksByUsername, createPicks } = require('../db');
-const { requireUser } = require('./utils');
+const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
-
-picksRouter.use((req, res, next) => {
-    console.log('A request is being made to /picks');
-    next();
-});
 
 picksRouter.get('/', async (req, res) => {
     const picks = await getAllPicks();
@@ -47,16 +42,25 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
     }
 });
 
-picksRouter.patch('/id/:pickId/updatePick', async (req, res, next) => {
+picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) => {
     const { pickId } = req.params;
     const { picks, parlays } = req.body;
+    let updateFields = {}
+
+    if (picks) {
+        updateFields.picks = picks;
+    }
+
+    if (parlays) {
+        updateFields.parlays = parlays;
+    }
     
     try {
         const pick = await getPickById(pickId);
         if (pick && pick.username === req.user.username) {
-            let updatedPick = await updatePicks(pickId, { picks, parlays })
+            let updatedPick = await updatePicks(pickId, updateFields)
             res.send({ pick: updatedPick });
-        } else if (pick && pick.username !== req.user) {
+        } else if (pick && pick.username !== req.user.username) {
             next({
                 name: 'UnauthorizedUserError',
                 message: 'You cannot edit a pick that is not yours'
@@ -72,15 +76,25 @@ picksRouter.patch('/id/:pickId/updatePick', async (req, res, next) => {
     }
 })
 
-picksRouter.patch('/id/:pickId/updateOutcomes', async (req, res, next) => {
+picksRouter.patch('/id/:pickId/updateOutcomes', requireAdmin, async (req, res, next) => {
     const { pickId } = req.params;
     const { outcomes, parlaysOutcomes } = req.body;
+
+    let updateFields = {}
+
+    if (outcomes) {
+        updateFields.outcomes = outcomes;
+    }
+
+    if (parlaysOutcomes) {
+        updateFields.parlaysOutcomes = parlaysOutcomes;
+    }
 
     try {
         const pick = await getPickById(pickId);
 
         if (pick && req.user.username) {
-            let updatedPick = await addOutcomesToPicks(pickId, { outcomes, parlaysOutcomes })
+            let updatedPick = await addOutcomesToPicks(pickId, updateFields)
             res.send({ pick: updatedPick });
         } else {
             next({
