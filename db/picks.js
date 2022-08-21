@@ -1,29 +1,12 @@
 const client = require('./client')
 
-async function createPicks({ username, picks, parlays }) {
-    let outcomesArr = [];
-    let parlaysOutcomesArr = [];
-    
-    if (picks) {
-        const picksLength = picks.length;        
-        for (let i = 0; i < picksLength; i++) {
-            outcomesArr.push('');
-        }
-    }
-    
-    if (parlays) {
-        const parlaysLength = parlays.length;        
-        for (let i = 0; i < parlaysLength; i++) {
-            parlaysOutcomesArr.push('');
-        }
-    }
-
+async function createPick({ username, gameid, type, bet, text }) {
     try {
         const { rows: [ pick ] } = await client.query(`
-            INSERT INTO picks(username, picks, outcomes, parlays, "parlaysOutcomes")
+            INSERT INTO picks(username, gameid, type, bet, text)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *;
-        `, [username, picks, outcomesArr, parlays, parlaysOutcomesArr]);
+        `, [username, gameid, type, bet, text]);
         return pick;
     } catch (error) {
         throw error;
@@ -124,7 +107,7 @@ async function getPickById(pickId) {
 }
 
 module.exports = {
-    createPicks,
+    createPick,
     getAllPicks,
     getPicksByUsername,
     updatePicks,

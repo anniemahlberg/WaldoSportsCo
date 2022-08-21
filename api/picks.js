@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePicks, addOutcomesToPicks, getPicksByUsername, createPicks } = require('../db');
+const { getAllPicks, getPickById, updatePicks, addOutcomesToPicks, getPicksByUsername, createPick} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
@@ -32,10 +32,10 @@ picksRouter.get('/username/:username', async (req, res) => {
 });
 
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
-    const { picks, parlays } = req.body;
+    const { gameid, type, bet, text } = req.body;
 
     try {
-        const pick = await createPicks({ username: req.user.username, picks, parlays });
+        const pick = await createPick({ username: req.user.username, gameid, type, bet, text });
         res.send({ message: 'You have made your picks!', pick});
     } catch ({ name, message }) {
         next({ name, message })
@@ -44,15 +44,23 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
 
 picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) => {
     const { pickId } = req.params;
-    const { picks, parlays } = req.body;
+    const { gameid, type, bet, text } = req.body;
     let updateFields = {}
 
-    if (picks) {
-        updateFields.picks = picks;
+    if (gameid) {
+        updateFields.gameid = gameid;
     }
 
-    if (parlays) {
-        updateFields.parlays = parlays;
+    if (type) {
+        updateFields.type = type;
+    }
+    
+    if (bet) {
+        updateFields.bet = bet;
+    }
+
+    if (text) {
+        updateFields.text = text;
     }
     
     try {
@@ -78,16 +86,12 @@ picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) 
 
 picksRouter.patch('/id/:pickId/updateOutcomes', requireAdmin, async (req, res, next) => {
     const { pickId } = req.params;
-    const { outcomes, parlaysOutcomes } = req.body;
+    const { outcome } = req.body;
 
     let updateFields = {}
 
-    if (outcomes) {
-        updateFields.outcomes = outcomes;
-    }
-
-    if (parlaysOutcomes) {
-        updateFields.parlaysOutcomes = parlaysOutcomes;
+    if (outcome) {
+        updateFields.outcome = outcome;
     }
 
     try {
