@@ -32,11 +32,13 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
 picksRouter.get('/username/:username', async (req, res) => {
     const { username } = req.params;
     const weeklypick = await getWeeklyPickByUsername(username)
-    const picks = await getPicksByWeedklyId(weeklypick.id);
+    if (weeklypick) {
+        const picks = await getPicksByWeedklyId(weeklypick.id);
+        res.send({
+            picks
+        })
+    }
 
-    res.send({
-        picks
-    });
 });
 
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
