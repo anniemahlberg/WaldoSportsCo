@@ -44,13 +44,86 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
+    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line, totalpointsoutcome, lineoutcome, active } = req.body;
+    let updateFields = {};
+
+    if (hometeam) {
+        updateFields.hometeam = hometeam;
+    }
+
+    if (awayteam) {
+        updateFields.awayteam = awayteam;
+    }
+
+    if (level) {
+        updateFields.level = level;
+    }
+
+    if (date) {
+        updateFields.date = date;
+    }
+
+    if (time) {
+        updateFields.time = time;
+    }
+
+    if (primetime) {
+        updateFields.primetime = primetime;
+    }
+
+    if (value) {
+        updateFields.value = value;
+    }
+
+    if (duration) {
+        updateFields.duration = duration;
+    }
+
+    if (over) {
+        updateFields.over = over;
+    }
+
+    if (under) {
+        updateFields.under = under;
+    }
+
+    if (chalk) {
+        updateFields.chalk = chalk;
+    }
+
+    if (dog) {
+        updateFields.dog = dog;
+    }
+
+    if (totalpoints) {
+        updateFields.totalpoints = totalpoints;
+    }
+
+    if (favoredteam) {
+        updateFields.favoredteam = favoredteam;
+    }
+
+    if (line) {
+        updateFields.line = line;
+    }
+
+    if (totalpointsoutcome) {
+        updateFields.totalpointsoutcome = totalpointsoutcome;
+    }
+
+    if (lineoutcome) {
+        updateFields.lineoutcome = lineoutcome;
+    }
+
+    if (active) {
+        updateFields.active = active;
+    }
 
     try {
         const game = await getGameById(gameId);
 
         if (game && req.user.username) {
-            let updatedGame = await updateGame(gameId, { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line })
+            let updatedGame = await updateGame(gameId, updateFields)
 
             res.send({ game: updatedGame });
         } else if (game) {
