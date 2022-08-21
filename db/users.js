@@ -61,12 +61,8 @@ async function getUserById(userId) {
             FROM users
             WHERE id=${ userId };
         `)
-
-        if (!user) {
-            return null;
-        } else {
-            return user;
-        }
+        
+        return user;
     } catch (error) {
         throw error;
     }
