@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePicks, addOutcomesToPicks, getPicksByUsername, createPick} = require('../db');
+const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeedklyId, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getPicksByGameIdAndType} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
@@ -11,7 +11,15 @@ picksRouter.get('/', async (req, res) => {
     });
 });
 
-picksRouter.get('/id/:pickId', async (req, res) => {
+picksRouter.get('/weeklyPicks', async (req, res) => {
+    const weeklypicks = await getAllWeeklyPicks();
+
+    res.send({
+        weeklypicks
+    });
+});
+
+picksRouter.get('/pick/id/:pickId', async (req, res) => {
     const { pickId } = req.params;
 
     const pick = await getPickById(pickId);
@@ -23,26 +31,35 @@ picksRouter.get('/id/:pickId', async (req, res) => {
 
 picksRouter.get('/username/:username', async (req, res) => {
     const { username } = req.params;
-
-    const pick = await getPicksByUsername(username);
+    const weeklypick = await getWeeklyPickByUsername(username)
+    const picks = await getPicksByWeedklyId(weeklypick.id);
 
     res.send({
-        pick
+        picks
     });
 });
 
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
-    const { gameid, type, bet, text } = req.body;
+    const { week, gameid, type, bet, text } = req.body;
 
     try {
-        const pick = await createPick({ username: req.user.username, gameid, type, bet, text });
-        res.send({ message: 'You have made your picks!', pick});
+        const weeklypick = await getWeeklyPickByUsername(req.user.username)
+
+        if (weeklypick) {
+            const pick = await createPick({ weeklyid: weeklypick.id, gameid, type, bet, text });
+            res.send({ message: 'You have made a pick!', pick});
+        } else {
+            const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week})
+            const pick = await createPick({ weeklyid: newWeeklyPick.id, gameid, type, bet, text })
+            res.send({ message: 'You have made a pick!', pick});
+
+        }
     } catch ({ name, message }) {
         next({ name, message })
     }
 });
 
-picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) => {
+picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, next) => {
     const { pickId } = req.params;
     const { gameid, type, bet, text } = req.body;
     let updateFields = {}
@@ -65,8 +82,9 @@ picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) 
     
     try {
         const pick = await getPickById(pickId);
-        if (pick && pick.username === req.user.username) {
-            let updatedPick = await updatePicks(pickId, updateFields)
+        const weeklypick = await getWeeklyPickById(pick.weeklyid)
+        if (pick && weeklypick.username === req.user.username) {
+            let updatedPick = await updatePick(pickId, updateFields)
             res.send({ pick: updatedPick });
         } else if (pick && pick.username !== req.user.username) {
             next({
@@ -84,9 +102,8 @@ picksRouter.patch('/id/:pickId/updatePick', requireUser, async (req, res, next) 
     }
 })
 
-picksRouter.patch('/id/:pickId/updateOutcomes', requireAdmin, async (req, res, next) => {
-    const { pickId } = req.params;
-    const { outcome } = req.body;
+picksRouter.patch('/updateOutcomes', requireAdmin, async (req, res, next) => {
+    const { gameid, type, outcome } = req.body;
 
     let updateFields = {}
 
@@ -95,17 +112,14 @@ picksRouter.patch('/id/:pickId/updateOutcomes', requireAdmin, async (req, res, n
     }
 
     try {
-        const pick = await getPickById(pickId);
+        let updatedPicks = []
+        const picks = await getPicksByGameIdAndType(gameid, type);
+        picks.forEach(async pick => {
+            let updatedPick = await addOutcomeToPick(pick.id, updateFields);
+            updatedPicks.push(updatedPick)
+        })
 
-        if (pick && req.user.username) {
-            let updatedPick = await addOutcomesToPicks(pickId, updateFields)
-            res.send({ pick: updatedPick });
-        } else {
-            next({
-                name: 'PickNotFoundError',
-                message: 'That pick does not exist'
-            });
-        }
+        res.send(`Outcome added!`);
     } catch ({ name, message }) {
         next({ name, message });
     }

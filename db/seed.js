@@ -1,18 +1,11 @@
 const client = require('./client');
 
 const {
-    getAllUsers,
     createUser,
     updateUser,
-    getUserById,
     createGame,
-    getAllGames,
-    updateGame,
     createPick,
-    getAllPicks,
-    getPicksByUsername,
-    updatePicks,
-    addOutcomesToPicks
+    createWeeklyPick
 } = require('./index');
 
 async function dropTables() {
@@ -20,6 +13,7 @@ try {
     console.log('Starting to drop tables...')
     await client.query(`
         DROP TABLE IF EXISTS picks;
+        DROP TABLE IF EXISTS weeklypicks;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS games;
     `);
@@ -34,7 +28,7 @@ async function createTables() {
 try {
     console.log('Starting to build tables...')
     await client.query(`
-        CREATE TABLE users (
+        CREATE TABLE users(
             id SERIAL PRIMARY KEY,
             username varchar(255) UNIQUE NOT NULL,
             password varchar(255) NOT NULL,
@@ -47,7 +41,7 @@ try {
     `);
 
     await client.query(`
-        CREATE TABLE games (
+        CREATE TABLE games(
             id SERIAL PRIMARY KEY,
             hometeam varchar(255),
             awayteam varchar(255),
@@ -71,15 +65,23 @@ try {
     `)
 
     await client.query(`
-        CREATE TABLE picks(
+        CREATE TABLE weeklypicks(
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) REFERENCES users(username),
+            week INTEGER NOT NULL,
+            active BOOLEAN DEFAULT true
+        );
+    `)
+
+    await client.query(`
+        CREATE TABLE picks(
+            id SERIAL PRIMARY KEY,
+            weeklyid INTEGER REFERENCES weeklypicks(id),
             gameid INTEGER REFERENCES games(id),
             type VARCHAR(255) NOT NULL,
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,
-            outcome VARCHAR(255) DEFAULT 'tbd',
-            active BOOLEAN DEFAULT true
+            outcome VARCHAR(255) DEFAULT 'tbd'
         );
     `)
 
@@ -110,11 +112,12 @@ try {
     await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
     await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
     await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
-
-    await createPick({username: 'annie123', gameid: 1, type: 'totalpoints', bet: 'over', text: 'raiders vs. chiefs over 27.5' })
-    await createPick({username: 'annie123', gameid: 3, type: 'line', bet: 'chalk', text: 'sporting kc -2.5' })
-    await createPick({username: 'nicktynick', gameid: 1, type: 'totalpoints', bet: 'under', text: 'raiders vs. chiefs under 27.5' })
-    await createPick({username: 'nicktynick', gameid: 2, type: 'totalpoints', bet: 'over', text: 'yankees vs. royals over 5.5' })
+    await createWeeklyPick({week: 1, username: 'annie123'})
+    await createWeeklyPick({week: 1, username: 'nicktynick'})
+    await createPick({weeklyid: 1, gameid: 1, type: 'totalpoints', bet: 'over', text: 'raiders vs. chiefs over 27.5' })
+    await createPick({weeklyid: 1, gameid: 3, type: 'line', bet: 'chalk', text: 'sporting kc -2.5' })
+    await createPick({weeklyid: 2, gameid: 1, type: 'totalpoints', bet: 'under', text: 'raiders vs. chiefs under 27.5' })
+    await createPick({weeklyid: 2, gameid: 2, type: 'totalpoints', bet: 'over', text: 'yankees vs. royals over 5.5' })
 
 
 
