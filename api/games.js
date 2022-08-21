@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -44,7 +44,7 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line, totalpointsoutcome, lineoutcome, active } = req.body;
+    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active } = req.body;
     let updateFields = {};
 
     if (hometeam) {
@@ -107,14 +107,6 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
         updateFields.line = line;
     }
 
-    if (totalpointsoutcome) {
-        updateFields.totalpointsoutcome = totalpointsoutcome;
-    }
-
-    if (lineoutcome) {
-        updateFields.lineoutcome = lineoutcome;
-    }
-
     if (active) {
         updateFields.active = active;
     }
@@ -122,10 +114,66 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     try {
         const game = await getGameById(gameId);
 
-        if (game && req.user.username) {
+        if (game) {
             let updatedGame = await updateGame(gameId, updateFields)
+            res.send({ game: updatedGame });
+        } else if (game) {
+            next({
+                name: 'UnauthorizedUserError',
+                message: 'You cannot update games'
+            })
+        } else {
+            next({
+                name: 'GameNotFoundError',
+                message: 'That game does not exist'
+            });
+        }
+    } catch ({ name, message }) {
+        next({ name, message });
+    }
+})
+
+gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next) => {
+    const { gameId } = req.params;
+    const { totalpointsoutcome, lineoutcome } = req.body;
+    let updateFields = {};
+
+    if (totalpointsoutcome) {
+        updateFields.totalpointsoutcome = totalpointsoutcome;
+    }
+    if (lineoutcome) {
+        updateFields.lineoutcome = lineoutcome;
+    }
+
+    try {
+        const game = await getGameById(gameId);
+
+        if (game) {
+            let updatedGame = await updateGame(gameId, updateFields)
+            if ((game.chalk || game.dog) && lineoutcome) {
+                const picksToUpdate = await getPicksByGameIdAndType(gameId, "line")
+                if (picksToUpdate) {
+                    let updatedPicks = []
+                    picksToUpdate.forEach(async pick => {
+                        let updatedPick = await addOutcomeToPick(pick.id, {outcome: lineoutcome});
+                        updatedPicks.push(updatedPick)
+                    })
+                }
+            }
+
+            if ((game.over || game.under) && totalpointsoutcome) {
+                const picksToUpdate = await getPicksByGameIdAndType(gameId, "totalpoints")
+                if (picksToUpdate) {
+                    let updatedPicks = []
+                    picksToUpdate.forEach(async pick => {
+                        let updatedPick = await addOutcomeToPick(pick.id, {outcome: totalpointsoutcome});
+                        updatedPicks.push(updatedPick)
+                    })
+                }
+            }
 
             res.send({ game: updatedGame });
+
         } else if (game) {
             next({
                 name: 'UnauthorizedUserError',
