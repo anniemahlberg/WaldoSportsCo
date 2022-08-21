@@ -36,13 +36,13 @@ try {
     await client.query(`
         CREATE TABLE users (
             id SERIAL PRIMARY KEY,
-            admin BOOLEAN DEFAULT false,
             username varchar(255) UNIQUE NOT NULL,
             password varchar(255) NOT NULL,
             firstname varchar(255) NOT NULL,
             lastname varchar(255) NOT NULL,
             email varchar(255) NOT NULL,
-            venmo varchar(255) NOT NULL
+            venmo varchar(255) NOT NULL,
+            admin BOOLEAN DEFAULT false
         );
     `);
 

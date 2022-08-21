@@ -72,7 +72,7 @@ usersRouter.post('/register', async (req, res, next) => {
 
 usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     const { userId } = req.params;
-    const { username, password, firstname, lastname, email, venmo, active, admin } = req.body;
+    const { username, password, firstname, lastname, email, venmo, admin } = req.body;
     let updateFields = {}
 
     if (username) {
@@ -97,10 +97,6 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
 
     if (venmo) {
         updateFields.venmo = venmo;
-    }
-
-    if (active) {
-        updateFields.active = active;
     }
 
     if (admin) {

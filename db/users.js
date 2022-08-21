@@ -20,7 +20,7 @@ async function createUser({ username, password, firstname, lastname, email, venm
 async function getAllUsers() {
     try {
         const { rows: users } = await client.query(
-            `SELECT id, username, firstname, lastname, email, venmo, active
+            `SELECT id, username, firstname, lastname, email, venmo, admin
             FROM users;
             `);
         
@@ -57,7 +57,8 @@ async function updateUser(id, fields = {}) {
 async function getUserById(userId) {
     try {
         const { rows: [ user ]} = await client.query(`
-            SELECT id, username, firstname, lastname, email, venmo, active FROM users
+            SELECT * 
+            FROM users
             WHERE id=${ userId };
         `)
 
