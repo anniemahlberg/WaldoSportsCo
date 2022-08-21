@@ -1,12 +1,7 @@
 const express = require('express');
 const gamesRouter = express.Router();
 const { getAllGames, createGame, updateGame, getGameById } = require('../db');
-const { requireUser } = require('./utils');
-
-gamesRouter.use((req, res, next) => {
-    console.log('A request is being made to /games');
-    next();
-});
+const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
     const games = await getAllGames();
@@ -26,7 +21,7 @@ gamesRouter.get('/:gameId', async (req, res) => {
     });
 });
 
-gamesRouter.post('/add', requireUser, async (req, res, next) => {
+gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
     const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
 
     try {
@@ -47,7 +42,7 @@ gamesRouter.post('/add', requireUser, async (req, res, next) => {
     }
 });
 
-gamesRouter.patch('/:gameId', requireUser, async (req, res, next) => {
+gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
     const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
 
