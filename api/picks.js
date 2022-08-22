@@ -28,7 +28,7 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
     });
 });
 
-picksRouter.get('/myPicks/:username', requireUser, async (req, res) => {
+picksRouter.get('/myPicks/:username', async (req, res) => {
     const { username } = req.params;
     const weeklypick = await getWeeklyPickByUsername(username)
     if (weeklypick) {
