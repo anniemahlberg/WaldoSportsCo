@@ -82,7 +82,8 @@ try {
             type VARCHAR(255) NOT NULL,
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,
-            outcome VARCHAR(255) DEFAULT 'tbd'
+            outcome VARCHAR(255) DEFAULT 'tbd',
+            UNIQUE (gameid, type)
         );
     `)
 
