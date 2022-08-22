@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeedklyId, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getPicksByGameIdAndType} = require('../db');
+const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeedklyId, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getPicksByGameIdAndType, getGameById} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
@@ -48,10 +48,11 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
         const weeklypick = await getWeeklyPickByUsername(req.user.username)
 
         if (weeklypick) {
-            const pick = await createPick({ weeklyid: weeklypick.id, gameid, type, bet, text });
+            const pick = await createPick({ weeklyid: game.id, gameid, type, bet, text });
             res.send({ message: 'You have made a pick!', pick});
         } else {
-            const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week})
+            const game = await getGameById(gameid)
+            const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week: game.week})
             const pick = await createPick({ weeklyid: newWeeklyPick.id, gameid, type, bet, text })
             res.send({ message: 'You have made a pick!', pick});
 
