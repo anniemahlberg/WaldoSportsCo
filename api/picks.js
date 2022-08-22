@@ -28,28 +28,6 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
     });
 });
 
-picksRouter.get('/myPicks/:username', async (req, res) => {
-    const { username } = req.params;
-    const weeklypick = await getWeeklyPickByUsername(username)
-    if (weeklypick) {
-        const picks = await getPicksByWeedklyId(weeklypick.id);
-        res.send({
-            picks
-        })
-    }
-
-});
-
-picksRouter.get('/weekly', requireUser, async (req, res, next) => {
-    const username = req.user.username
-    const weeklypick = await getWeeklyPickByUsername(username)
-    if (weeklypick) {
-        res.send({
-            weeklypick
-        })
-    }
-})
-
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
     const { weeklyid, gameid, type, bet, text } = req.body;
 
