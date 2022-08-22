@@ -7,15 +7,9 @@ const client = require('./db/client');
 const apiRouter = require('./api');
 const cors = require('cors');
 
-const corsOptions = {
-    origin: "*",
-    credentials: true,
-    optionsSuccessStatus: 200
-};
-
-server.use(cors(corsOptions));
 server.use(morgan('dev'));
 server.use(express.json());
+server.use(cors());
 server.use('/api', apiRouter);
 
 client.connect();
