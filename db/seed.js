@@ -46,6 +46,7 @@ try {
             hometeam varchar(255),
             awayteam varchar(255),
             level varchar(255),
+            week INTEGER,
             date varchar(255),
             time varchar(255),
             duration varchar(255),
@@ -109,17 +110,9 @@ try {
     await createUser({username: 'annie123', password: 'pass123', firstname: 'annie', lastname: 'mahl', email: 'annie@email.com', venmo: 'venmouser'})
     await createUser({username: 'nicktynick', password: 'pass123', firstname: 'nick', lastname: 'han', email: 'nick@email.com', venmo: 'venmouser2'})
     await updateUser(1, {venmo: 'venmo2', admin: true})
-    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
-    await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
-    await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
-    await createWeeklyPick({week: 1, username: 'annie123'})
-    await createWeeklyPick({week: 1, username: 'nicktynick'})
-    await createPick({weeklyid: 1, gameid: 1, type: 'totalpoints', bet: 'over', text: 'raiders vs. chiefs over 27.5' })
-    await createPick({weeklyid: 1, gameid: 3, type: 'line', bet: 'chalk', text: 'sporting kc -2.5' })
-    await createPick({weeklyid: 2, gameid: 1, type: 'totalpoints', bet: 'under', text: 'raiders vs. chiefs under 27.5' })
-    await createPick({weeklyid: 2, gameid: 2, type: 'totalpoints', bet: 'over', text: 'yankees vs. royals over 5.5' })
-
-
+    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", week:1,  date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
+    await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", week:1, date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
+    await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", week:1, date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
 
 } catch (error) {
     console.error("Error testing database!");

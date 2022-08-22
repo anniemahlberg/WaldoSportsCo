@@ -1,10 +1,27 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
     const games = await getAllGames();
+
+    res.send({
+        games
+    });
+});
+
+gamesRouter.get('/active', async (req, res) => {
+    const games = await getAllActiveGames();
+
+    res.send({
+        games
+    });
+});
+
+gamesRouter.get('/byWeek/:week', async (req, res) => {
+    const { week } = req.params
+    const games = await getAllGamesByWeek(week);
 
     res.send({
         games
@@ -44,7 +61,7 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active } = req.body;
+    const { hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active } = req.body;
     let updateFields = {};
 
     if (hometeam) {
@@ -57,6 +74,10 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
 
     if (level) {
         updateFields.level = level;
+    }
+
+    if (week) {
+        updateFields.week = week;
     }
 
     if (date) {
