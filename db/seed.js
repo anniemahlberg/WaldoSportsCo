@@ -78,7 +78,6 @@ try {
         CREATE TABLE picks(
             id SERIAL PRIMARY KEY,
             weeklyid INTEGER REFERENCES weeklypicks(id),
-            username VARCHAR(255) REFERENCES weeklypicks(username),
             gameid INTEGER REFERENCES games(id),
             type VARCHAR(255) NOT NULL,
             bet VARCHAR(255) NOT NULL,
