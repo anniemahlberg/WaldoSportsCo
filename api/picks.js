@@ -3,11 +3,6 @@ const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeedkl
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
-picksRouter.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
-
 picksRouter.get('/', async (req, res) => {
     const picks = await getAllPicks();
 
