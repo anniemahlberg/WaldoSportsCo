@@ -35,7 +35,11 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
     try {
         if (weeklyPick ) {
             const pick = await createPick({ weeklyid: weeklyPick.id, gameid, type, bet, text });
-            res.send({ message: 'You have made a pick!', pick});
+            if (pick) {
+                res.send({ message: 'You have made a pick!', pick});
+            } else {
+                res.send({message: `You have already made ${type} pick for this game!`})
+            }
         } else if (!weeklyPick) {
             const game = await getGameById(gameid)
             const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week: game.week})
