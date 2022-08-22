@@ -14,6 +14,9 @@ const corsOptions = {
 };
 
 server.use(cors(corsOptions));
+server.get('/', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+})
 server.use(morgan('dev'));
 server.use(express.json());
 server.use('/api', apiRouter);
