@@ -52,13 +52,11 @@ picksRouter.get('/weekly/username', requireUser, async (req, res, next) => {
 })
 
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
-    const { gameid, type, bet, text } = req.body;
+    const { weeklyid, gameid, type, bet, text } = req.body;
 
     try {
-        const weeklypick = await getWeeklyPickByUsername(req.user.username)
-
-        if (weeklypick ) {
-            const pick = await createPick({ weeklyid: weeklypick.id, gameid, type, bet, text });
+        if (weeklyid ) {
+            const pick = await createPick({ weeklyid, gameid, type, bet, text });
             res.send({ message: 'You have made a pick!', pick});
         } else {
             const game = await getGameById(gameid)
