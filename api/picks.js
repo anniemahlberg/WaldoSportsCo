@@ -28,8 +28,8 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
     });
 });
 
-picksRouter.get('/myPicks', requireUser, async (req, res) => {
-    const username = req.user.username
+picksRouter.get('/myPicks/:username', requireUser, async (req, res) => {
+    const { username } = req.params;
     const weeklypick = await getWeeklyPickByUsername(username)
     if (weeklypick) {
         const picks = await getPicksByWeedklyId(weeklypick.id);
