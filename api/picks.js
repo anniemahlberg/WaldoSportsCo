@@ -7,7 +7,7 @@ picksRouter.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
   });
-  
+
 picksRouter.get('/', async (req, res) => {
     const picks = await getAllPicks();
 
@@ -33,7 +33,7 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
     });
 });
 
-picksRouter.get('/username', requireUser, async (req, res) => {
+picksRouter.get('/myPicks', requireUser, async (req, res) => {
     const username = req.user.username
     const weeklypick = await getWeeklyPickByUsername(username)
     if (weeklypick) {
