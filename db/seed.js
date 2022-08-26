@@ -94,6 +94,7 @@ try {
             outcome VARCHAR(255) DEFAULT 'tbd',
             lock BOOLEAN DEFAULT false,
             worth INTEGER DEFAULT 1,
+            pointsawarded INTEGER DEFAULT 0,
             UNIQUE (weeklyid, gameid, type)
         );
     `)

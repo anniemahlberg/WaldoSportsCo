@@ -54,7 +54,7 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
 
 picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, next) => {
     const { pickId } = req.params;
-    const { gameid, type, bet, text, lock, worth } = req.body;
+    const { gameid, type, bet, text, lock, worth, pointsawarded } = req.body;
     let updateFields = {}
 
     if (gameid) {
@@ -79,6 +79,10 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
 
     if (worth) {
         updateFields.worth = worth;
+    }
+
+    if (pointsawarded) {
+        updateFields.pointsawarded = pointsawarded;
     }
     
     try {
