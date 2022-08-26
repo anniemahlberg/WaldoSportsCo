@@ -156,27 +156,4 @@ picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async
     }
 })
 
-picksRouter.patch('/updateOutcomes', requireAdmin, async (req, res, next) => {
-    const { gameid, type, outcome } = req.body;
-
-    let updateFields = {}
-
-    if (outcome) {
-        updateFields.outcome = outcome;
-    }
-
-    try {
-        let updatedPicks = []
-        const picks = await getPicksByGameIdAndType(gameid, type);
-        picks.forEach(async pick => {
-            let updatedPick = await addOutcomeToPick(pick.id, updateFields);
-            updatedPicks.push(updatedPick)
-        })
-
-        res.send(`Outcome added!`);
-    } catch ({ name, message }) {
-        next({ name, message });
-    }
-})
-
 module.exports = picksRouter;

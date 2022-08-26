@@ -156,7 +156,7 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
-    const { totalpointsoutcome, lineoutcome } = req.body;
+    const { totalpointsoutcome, lineoutcome, totalpointsoutcometext, lineoutcometext } = req.body;
     let updateFields = {};
 
     if (totalpointsoutcome) {
@@ -176,7 +176,18 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                 if (picksToUpdate) {
                     let updatedPicks = []
                     picksToUpdate.forEach(async pick => {
-                        let updatedPick = await addOutcomeToPick(pick.id, {outcome: lineoutcome});
+                        let updateFieldsForPick = {
+                            outcome: lineoutcome,
+                            outcometext: lineoutcometext
+                        }
+
+                        if (pick.bet === lineoutcome) {
+                            updateFieldsForPick.pointsawarded = pick.worth
+                        } else {
+                            updateFieldsForPick.pointsawarded = -pick.worth
+                        }
+
+                        let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
                     })
                 }
@@ -187,7 +198,17 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                 if (picksToUpdate) {
                     let updatedPicks = []
                     picksToUpdate.forEach(async pick => {
-                        let updatedPick = await addOutcomeToPick(pick.id, {outcome: totalpointsoutcome});
+                        let updateFieldsForPick = {
+                            outcome: totalpointsoutcome,
+                            outcometext: totalpointsoutcometext
+                        }
+
+                        if (pick.bet === totalpointsoutcome) {
+                            updateFieldsForPick.pointsawarded = pick.worth
+                        } else {
+                            updateFieldsForPick.pointsawarded = -pick.worth
+                        }
+                        let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
                     })
                 }
