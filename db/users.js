@@ -20,7 +20,7 @@ async function createUser({ username, password, firstname, lastname, email, venm
 async function getAllUsers() {
     try {
         const { rows: users } = await client.query(
-            `SELECT id, username, firstname, lastname, email, venmo, admin
+            `SELECT id, username, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks
             FROM users;
             `);
         

@@ -72,7 +72,7 @@ usersRouter.post('/register', async (req, res, next) => {
 
 usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     const { userId } = req.params;
-    const { username, password, firstname, lastname, email, venmo, admin } = req.body;
+    const { username, password, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks  } = req.body;
     let updateFields = {}
 
     if (username) {
@@ -102,6 +102,22 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     if (admin) {
         updateFields.admin = admin;
     }
+
+    if (betscorrect) {
+        updateFields.betscorrect = betscorrect;
+    }
+
+    if (totalbets) {
+        updateFields.totalbets = totalbets;
+    }
+
+    if (lockscorrect) {
+        updateFields.lockscorrect = lockscorrect;
+    }
+
+    if (totallocks) {
+        updateFields.totallocks = totallocks;
+    }
     
     try {
         const user = await getUserById(userId);
@@ -111,7 +127,7 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
         } else if (user && user.username !== req.user.username) {
             next({
                 name: 'UnauthorizedUserError',
-                message: 'You cannot edit a user that is not your'
+                message: 'You cannot edit a user that is not you'
             })
         } else {
             next({

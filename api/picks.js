@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeedklyId, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getPicksByGameIdAndType, getGameById} = require('../db');
+const { getAllPicks, getPickById, updatePick, addOutcomeToPick, getPicksByWeeklyId, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getPicksByGameIdAndType, getGameById, updateWeeklyPick} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
@@ -29,12 +29,12 @@ picksRouter.get('/pick/id/:pickId', async (req, res) => {
 });
 
 picksRouter.post('/addPick', requireUser, async (req, res, next) => {
-    const { gameid, type, bet, text } = req.body;
+    const { gameid, type, bet, text, lock, worth } = req.body;
     const weeklyPick = await getWeeklyPickByUsername(req.user.username)
 
     try {
         if (weeklyPick ) {
-            const pick = await createPick({ weeklyid: weeklyPick.id, gameid, type, bet, text });
+            const pick = await createPick({ weeklyid: weeklyPick.id, gameid, type, bet, text, lock, worth });
             if (pick) {
                 res.send({ message: 'You have made a pick!', pick});
             } else {
@@ -43,7 +43,7 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
         } else if (!weeklyPick) {
             const game = await getGameById(gameid)
             const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week: game.week})
-            const pick = await createPick({ weeklyid: newWeeklyPick.id, gameid, type, bet, text })
+            const pick = await createPick({ weeklyid: newWeeklyPick.id, gameid, type, bet, text, lock, worth })
             res.send({ message: 'You have made a pick!', pick});
 
         }
@@ -54,7 +54,7 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
 
 picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, next) => {
     const { pickId } = req.params;
-    const { gameid, type, bet, text } = req.body;
+    const { gameid, type, bet, text, lock, worth } = req.body;
     let updateFields = {}
 
     if (gameid) {
@@ -72,6 +72,14 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
     if (text) {
         updateFields.text = text;
     }
+
+    if (lock) {
+        updateFields.lock = lock;
+    }
+
+    if (worth) {
+        updateFields.worth = worth;
+    }
     
     try {
         const pick = await getPickById(pickId);
@@ -84,6 +92,55 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
                 name: 'UnauthorizedUserError',
                 message: 'You cannot edit a pick that is not yours'
             })
+        } else {
+            next({
+                name: 'PickNotFoundError',
+                message: 'That pick does not exist'
+            });
+        }
+    } catch ({ name, message }) {
+        next({ name, message });
+    }
+})
+
+picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async (req, res, next) => {
+    const { weeklyPickId } = req.params;
+    const { week, active, betscorrect, totalbets, lockscorrect, totallocks, totalpoints } = req.body;
+    let updateFields = {}
+
+    if (week) {
+        updateFields.week = week;
+    }
+
+    if (active) {
+        updateFields.active = active;
+    }
+    
+    if (betscorrect) {
+        updateFields.betscorrect = betscorrect;
+    }
+
+    if (totalbets) {
+        updateFields.totalbets = totalbets;
+    }
+
+    if (lockscorrect) {
+        updateFields.lockscorrect = lockscorrect;
+    }
+
+    if (totallocks) {
+        updateFields.totallocks = totallocks;
+    }
+
+    if (totalpoints) {
+        updateFields.totalpoints = totalpoints;
+    }
+    
+    try {
+        const weeklypick = await getWeeklyPickById(weeklyPickId)
+        if (weeklypick) {
+            let updatedWeeklyPick = await updateWeeklyPick(weeklyPickId, updateFields)
+            res.send({ weeklypick: updatedWeeklyPick });
         } else {
             next({
                 name: 'PickNotFoundError',

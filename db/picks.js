@@ -17,11 +17,11 @@ async function createWeeklyPick({ username, week}) {
 async function createPick({ weeklyid, gameid, type, bet, text }) {
     try {
         const { rows: [ pick ] } = await client.query(`
-            INSERT INTO picks(weeklyid, gameid, type, bet, text)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO picks(weeklyid, gameid, type, bet, text, lock, worth)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (weeklyid, gameid, type) DO NOTHING
             RETURNING *;
-        `, [weeklyid, gameid, type, bet, text]);
+        `, [weeklyid, gameid, type, bet, text, lock, worth]);
 
         return pick;
     } catch (error) {
@@ -97,7 +97,7 @@ async function getAllActiveWeeklyPicksByWeek(week) {
     }
 }
 
-async function getPicksByWeedklyId(weeklyid) {
+async function getPicksByWeeklyId(weeklyid) {
     try {
         const { rows: picks } = await client.query(`
             SELECT *
@@ -261,7 +261,7 @@ module.exports = {
     getAllActiveWeeklyPicksByWeek,
     getAllWeeklyPicks,
     getAllWeeklyPicksByWeek,
-    getPicksByWeedklyId,
+    getPicksByWeeklyId,
     updatePick,
     updateWeeklyPick,
     addOutcomeToPick,

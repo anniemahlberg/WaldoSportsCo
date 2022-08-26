@@ -4,14 +4,14 @@ const {
     createUser,
     updateUser,
     createGame,
-    createPick,
-    createWeeklyPick
+    createPointValues
 } = require('./index');
 
 async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
+        DROP TABLE IF EXISTS points;
         DROP TABLE IF EXISTS picks;
         DROP TABLE IF EXISTS weeklypicks;
         DROP TABLE IF EXISTS users;
@@ -36,7 +36,11 @@ try {
             lastname varchar(255) NOT NULL,
             email varchar(255) NOT NULL,
             venmo varchar(255) NOT NULL,
-            admin BOOLEAN DEFAULT false
+            admin BOOLEAN DEFAULT false,
+            betscorrect INTEGER DEFAULT 0,
+            totalbets INTEGER DEFAULT 0,
+            lockscorrect INTEGER DEFAULT 0,
+            totallocks INTEGER DEFAULT 0
         );
     `);
 
@@ -70,7 +74,12 @@ try {
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) REFERENCES users(username),
             week INTEGER NOT NULL,
-            active BOOLEAN DEFAULT true
+            active BOOLEAN DEFAULT true,
+            betscorrect INTEGER DEFAULT 0,
+            totalbets INTEGER DEFAULT 0,
+            lockscorrect INTEGER DEFAULT 0,
+            totallocks INTEGER DEFAULT 0,
+            totalpoints INTEGER DEFAULT 0
         );
     `)
 
@@ -83,7 +92,23 @@ try {
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,
             outcome VARCHAR(255) DEFAULT 'tbd',
+            lock BOOLEAN DEFAULT false,
+            worth INTEGER DEFAULT 1,
             UNIQUE (weeklyid, gameid, type)
+        );
+    `)
+
+    await client.query(`
+        CREATE TABLE points(
+            id SERIAL PRIMARY KEY,
+            pick INTEGER,
+            incorrectpick INTEGER,
+            primetime INTEGER,
+            incorrectprimetime INTEGER,
+            lock INTEGER,
+            incorrectlock INTEGER,
+            primetimelock INTEGER,
+            incorrectprimetimelock INTEGER
         );
     `)
 
@@ -114,7 +139,7 @@ try {
     await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", week:1,  date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
     await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", week:1, date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
     await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", week:1, date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
-
+    await createPointValues({pick: 1, incorrectpick: -1, lock: 5, incorrectlock: -5, primetime: 2, incorrectprimetime: -2, primetimelock: 7, incorrectprimetimelock: -7})
 } catch (error) {
     console.error("Error testing database!");
     throw error;
