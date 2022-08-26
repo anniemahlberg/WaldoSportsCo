@@ -14,7 +14,7 @@ async function createWeeklyPick({ username, week}) {
     }
 }
 
-async function createPick({ weeklyid, gameid, type, bet, text }) {
+async function createPick({ weeklyid, gameid, type, bet, text, lock, worth }) {
     try {
         const { rows: [ pick ] } = await client.query(`
             INSERT INTO picks(weeklyid, gameid, type, bet, text, lock, worth)
