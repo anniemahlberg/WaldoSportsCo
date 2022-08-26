@@ -38,7 +38,7 @@ picksRouter.post('/addPick', requireUser, async (req, res, next) => {
             if (pick) {
                 res.send({ message: 'You have made a pick!', pick});
             } else {
-                res.send({message: `You have already made ${type} pick for this game!`, name: "DuplicatePickError"})
+                res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
             }
         } else if (!weeklyPick) {
             const game = await getGameById(gameid)

@@ -83,7 +83,7 @@ try {
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,
             outcome VARCHAR(255) DEFAULT 'tbd',
-            UNIQUE (gameid, type)
+            UNIQUE (weeklyid, gameid, type)
         );
     `)
 

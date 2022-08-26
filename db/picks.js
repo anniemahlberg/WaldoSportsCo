@@ -19,7 +19,7 @@ async function createPick({ weeklyid, gameid, type, bet, text }) {
         const { rows: [ pick ] } = await client.query(`
             INSERT INTO picks(weeklyid, gameid, type, bet, text)
             VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (gameid, type) DO NOTHING
+            ON CONFLICT (weeklyid, gameid, type) DO NOTHING
             RETURNING *;
         `, [weeklyid, gameid, type, bet, text]);
 
