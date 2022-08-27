@@ -183,8 +183,10 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         if (pick.bet === lineoutcome) {
                             updateFieldsForPick.pointsawarded = pick.worth
+                        } else if (lineoutcome === "push") {
+                            updateFieldsForPick.pointsawarded = 0;
                         } else {
-                            updateFieldsForPick.pointsawarded = -pick.worth
+                            updateFieldsForPick.pointsawarded = -pick.worth;
                         }
 
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
@@ -205,9 +207,12 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         if (pick.bet === totalpointsoutcome) {
                             updateFieldsForPick.pointsawarded = pick.worth
+                        } else if (totalpointsoutcome === "push") {
+                            updateFieldsForPick.pointsawarded = 0;
                         } else {
-                            updateFieldsForPick.pointsawarded = -pick.worth
+                            updateFieldsForPick.pointsawarded = -pick.worth;
                         }
+
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
                     })
