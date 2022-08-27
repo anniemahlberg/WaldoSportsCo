@@ -196,14 +196,14 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let weeklyPickUpdateFields = {}
                         weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
 
-                        if (Number(pick.pointsawarded > 0)) {
+                        if (updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
                         }
 
-                        if (pick.lock && Number(pick.pointsawarded) > 0) {
+                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
                             weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        } else if (pick.lock && Number(pick.pointsawarded) < 0) {
+                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
                             weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         }
 
@@ -238,14 +238,14 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let weeklyPickUpdateFields = {}
                         weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
 
-                        if (Number(pick.pointsawarded) > 0) {
+                        if (updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
                         }
 
-                        if (pick.lock && Number(pick.pointsawarded) > 0) {
+                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
                             weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        } else if (pick.lock && Number(pick.pointsawarded) < 0) {
+                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
                             weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         }
 
