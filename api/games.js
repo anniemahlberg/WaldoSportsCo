@@ -197,8 +197,8 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let userUpdateFields = {}
                         weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
                         userUpdateFields.totalbets = user.totalbets + 1;
-                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
-                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updatedPick.pointsawarded;
+                        userUpdateFields.totalpoints = user.totalpoints + updatedPick.pointsawarded;
 
                         if (updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
@@ -249,8 +249,8 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let userUpdateFields = {}
                         weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
                         userUpdateFields.totalbets = user.totalbets + 1;
-                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
-                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updatedPick.pointsawarded;
+                        userUpdateFields.totalpoints = user.totalpoints + updatedPick.pointsawarded;
 
                         if (updateFieldsForPick.pointsawarded > 0) {
                             weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
