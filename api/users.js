@@ -66,9 +66,8 @@ usersRouter.post('/register', async (req, res, next) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
         const user = await createUser({
-            username, password:hashedPassword, firstname, lastname, email, venmo
+            username, password, firstname, lastname, email, venmo
         });
 
         const token = jwt.sign({ id: user.id, username }, JWT_SECRET, {expiresIn: '1w'});
