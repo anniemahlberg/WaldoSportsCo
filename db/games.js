@@ -3,10 +3,10 @@ const client = require('./client')
 async function createGame({ hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line }) {
     try {
         const { rows: [ game ] } = await client.query(`
-            INSERT INTO games(hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line)
+            INSERT INTO games( hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
             RETURNING *;
-        `, [hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line]);
+        `, [ hometeam, awayteam, level, week, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line]);
         return game;
     } catch (error) {
         throw error;

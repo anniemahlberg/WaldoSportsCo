@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -39,12 +39,12 @@ gamesRouter.get('/:gameId', async (req, res) => {
 });
 
 gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
-    const { hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
+    const { week, hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line } = req.body;
 
     try {
         if (req.user.username) {
             const game = await createGame({
-                hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line
+                week, hometeam, awayteam, level, date, time, primetime, value, duration, over, under, chalk, dog, totalpoints, favoredteam, line
             });
     
             res.send({ message: 'you have added a new game!', game});
@@ -191,6 +191,21 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
+
+                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
+                        weeklypick.totalbets += 1;
+
+                        if (pick.pointsawarded > 0) {
+                            weeklypick.betscorrect += 1;
+                        }
+
+                        if (pick.lock && pick.pointsawarded > 0) {
+                            weeklypick.lockscorrect += 1;
+                            weeklypick.totallocks += 1;
+                        } else if (pick.lock && pick.pointsawarded < 0) {
+                            weeklypick.totallocks += 1;
+                        }
+
                     })
                 }
             }
@@ -215,9 +230,23 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
+
+                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
+                        weeklypick.totalbets += 1;
+
+                        if (pick.pointsawarded > 0) {
+                            weeklypick.betscorrect += 1;
+                        }
+
+                        if (pick.lock && pick.pointsawarded > 0) {
+                            weeklypick.lockscorrect += 1;
+                            weeklypick.totallocks += 1;
+                        } else if (pick.lock && pick.pointsawarded < 0) {
+                            weeklypick.totallocks += 1;
+                        }
                     })
                 }
-            }
+            }            
 
             res.send({ game: updatedGame });
 
