@@ -11,7 +11,6 @@ async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
-        DROP TABLE IF EXISTS points;
         DROP TABLE IF EXISTS picks;
         DROP TABLE IF EXISTS weeklypicks;
         DROP TABLE IF EXISTS users;
@@ -98,20 +97,6 @@ try {
             worth INTEGER DEFAULT 1,
             pointsawarded INTEGER DEFAULT 0,
             UNIQUE (weeklyid, gameid, type)
-        );
-    `)
-
-    await client.query(`
-        CREATE TABLE points(
-            id SERIAL PRIMARY KEY,
-            pick INTEGER,
-            incorrectpick INTEGER,
-            primetime INTEGER,
-            incorrectprimetime INTEGER,
-            lock INTEGER,
-            incorrectlock INTEGER,
-            primetimelock INTEGER,
-            incorrectprimetimelock INTEGER
         );
     `)
 
