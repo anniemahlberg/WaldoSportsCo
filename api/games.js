@@ -216,6 +216,9 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                             userUpdateFields.totallocks = user.totallocks + 1;
                         }
 
+                        console.log(weeklyPickUpdateFields)
+                        console.log(userUpdateFields)
+
                         await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
                         await updateUser(user.id, userUpdateFields)
                     })
