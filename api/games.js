@@ -192,11 +192,11 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
 
-                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        const user = await getUserByUsername(weeklypick.username)
+                        let weeklypick = await getWeeklyPickById(pick.weeklyid)
+                        let user = await getUserByUsername(weeklypick.username)
                         let weeklyPickUpdateFields = {}
                         let userUpdateFields = {}
-                        weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
+                        weeklyPickUpdateFields.totalbets = weeklypick.totalbets + 1;
                         userUpdateFields.totalbets = user.totalbets + 1;
                         weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updatedPick.pointsawarded;
                         userUpdateFields.totalpoints = user.totalpoints + updatedPick.pointsawarded;
@@ -246,8 +246,8 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
                         updatedPicks.push(updatedPick)
 
-                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        const user = await getUserByUsername(weeklypick.username)
+                        let weeklypick = await getWeeklyPickById(pick.weeklyid)
+                        let user = await getUserByUsername(weeklypick.username)
                         let weeklyPickUpdateFields = {}
                         let userUpdateFields = {}
                         weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
