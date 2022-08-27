@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -209,6 +209,24 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
 
+                        const user = await getUserByUsername(weeklypick.username)
+                        let userUpdateFields = {}
+                        userUpdateFields.totalbets =  user.totalbets + 1;
+                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+
+                        if (updateFieldsForPick.pointsawarded > 0) {
+                            userUpdateFields.betscorrect = user.betscorrect + 1;
+                        }
+
+                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                            userUpdateFields.lockscorrect = user.lockscorrect + 1;
+                            userUpdateFields.totallocks = user.totallocks + 1;
+                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                            userUpdateFields.totallocks = user.totallocks + 1;
+                        }
+
+                        await updateUser(user.id, userUpdateFields)
+
                     })
                 }
             }
@@ -251,6 +269,24 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         }
 
                         await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
+
+                        const user = await getUserByUsername(weeklypick.username)
+                        let userUpdateFields = {}
+                        userUpdateFields.totalbets =  user.totalbets + 1;
+                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+
+                        if (updateFieldsForPick.pointsawarded > 0) {
+                            userUpdateFields.betscorrect = user.betscorrect + 1;
+                        }
+
+                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                            userUpdateFields.lockscorrect = user.lockscorrect + 1;
+                            userUpdateFields.totallocks = user.totallocks + 1;
+                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                            userUpdateFields.totallocks = user.totallocks + 1;
+                        }
+
+                        await updateUser(user.id, userUpdateFields)
                     })
                 }
             }            
