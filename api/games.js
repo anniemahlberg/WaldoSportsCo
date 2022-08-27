@@ -5,7 +5,7 @@ const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
     const games = await getAllGames();
-
+    res.set('Access-Control-Allow-Origin', '*');
     res.send({
         games
     });
