@@ -170,6 +170,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
         if (game) {
             let updatedGame = await updateGame(gameId, updateFields)
+
             if ((game.chalk || game.dog) && lineoutcome) {
                 const picksToUpdate = await getPicksByGameIdAndType(gameId, "line")
                 if (picksToUpdate) {
@@ -217,7 +218,6 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
 
                         await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
                         await updateUser(user.id, userUpdateFields)
-
                     })
                 }
             }
