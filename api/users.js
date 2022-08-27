@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername, createUser, getUserById } = require('../db');
+const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats } = require('../db');
 const { requireUser } = require('./utils')
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
@@ -10,6 +10,13 @@ usersRouter.get('/', async (req, res) => {
     const users = await getAllUsers();
     res.send({
         users
+    });
+});
+
+usersRouter.get('/stats', async (req, res) => {
+    const usersStats = await getAllUserStats();
+    res.send({
+        usersStats
     });
 });
 

@@ -40,7 +40,8 @@ try {
             betscorrect INTEGER DEFAULT 0,
             totalbets INTEGER DEFAULT 0,
             lockscorrect INTEGER DEFAULT 0,
-            totallocks INTEGER DEFAULT 0
+            totallocks INTEGER DEFAULT 0,
+            totalpoints INTEGER DEFAULT 0
         );
     `);
 
