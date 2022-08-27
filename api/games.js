@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -193,18 +193,21 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         updatedPicks.push(updatedPick)
 
                         const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        weeklypick.totalbets += 1;
+                        let weeklyPickUpdateFields = {}
+                        weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
 
                         if (pick.pointsawarded > 0) {
-                            weeklypick.betscorrect += 1;
+                            weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
                         }
 
                         if (pick.lock && pick.pointsawarded > 0) {
-                            weeklypick.lockscorrect += 1;
-                            weeklypick.totallocks += 1;
+                            weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
+                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         } else if (pick.lock && pick.pointsawarded < 0) {
-                            weeklypick.totallocks += 1;
+                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         }
+
+                        await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
 
                     })
                 }
@@ -232,18 +235,21 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         updatedPicks.push(updatedPick)
 
                         const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        weeklypick.totalbets += 1;
+                        let weeklyPickUpdateFields = {}
+                        weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
 
                         if (pick.pointsawarded > 0) {
-                            weeklypick.betscorrect += 1;
+                            weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
                         }
 
                         if (pick.lock && pick.pointsawarded > 0) {
-                            weeklypick.lockscorrect += 1;
-                            weeklypick.totallocks += 1;
+                            weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
+                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         } else if (pick.lock && pick.pointsawarded < 0) {
-                            weeklypick.totallocks += 1;
+                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
                         }
+
+                        await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
                     })
                 }
             }            
