@@ -85,7 +85,7 @@ async function getUserByUsername(username) {
 async function getAllUserStats() {
     try {
         const { rows: users } = await client.query(`
-            SELECT (username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints)
+            SELECT username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints
             FROM users;
         `)
 
