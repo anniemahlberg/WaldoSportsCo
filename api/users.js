@@ -13,6 +13,15 @@ usersRouter.get('/', async (req, res) => {
     });
 });
 
+usersRouter.get('/currentUser', async (req, res) => {
+    if (req.user) {
+        let currentUser = req.user
+        res.send(currentUser)
+    }
+
+    res.send(null)
+})
+
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
