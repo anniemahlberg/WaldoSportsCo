@@ -3,7 +3,7 @@ const apiRouter = express.Router();
 const usersRouter = require('./users');
 const gamesRouter = require('./games');
 const picksRouter = require('./picks');
-const pointsRouter = require('./points');
+const parlaysRouter = require('./parlays');
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../db');
 const { JWT_SECRET } = process.env;
@@ -37,7 +37,7 @@ apiRouter.use(async (req, res, next) => {
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/games', gamesRouter);
 apiRouter.use('/picks', picksRouter);
-apiRouter.use('/points', pointsRouter);
+apiRouter.use('/parlays', parlaysRouter);
 
 apiRouter.use((error, req, res, next) => {
     res.send({
