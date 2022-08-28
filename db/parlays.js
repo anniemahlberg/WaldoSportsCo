@@ -91,6 +91,22 @@ async function getParlayPicksByParlayNumber(parlaynumber) {
             FROM parlays
             WHERE parlaynumber=$1;
         `, [parlaynumber])
+
+        return parlayPicks;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getParlayPicksByParlayNumberAndWeeklyId(parlaynumber, weeklyid) {
+    try {
+        const { rows: parlayPicks } = await client.query(`
+            SELECT * 
+            FROM parlays
+            WHERE parlaynumber=$1 AND weeklyid=$2;
+        `, [parlaynumber, weeklyid])
+
+        return parlayPicks;
     } catch (error) {
         throw error;
     }
@@ -153,5 +169,6 @@ module.exports = {
     getParlayPickById,
     getParlayPicksByGameId,
     getParlayPicksByGameIdAndType,
-    getParlayPicksByParlayNumber
+    getParlayPicksByParlayNumber,
+    getParlayPicksByParlayNumberAndWeeklyId
 }

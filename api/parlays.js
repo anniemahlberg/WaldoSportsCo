@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllParlayPicks, getParlayPickById, updateParlayPick, createParlayPick, createWeeklyPick, getGameById, getWeeklyPickById, getWeeklyPickByUsername, updateWeeklyPick} = require('../db');
+const { getAllParlayPicks, getParlayPickById, updateParlayPick, createParlayPick, createWeeklyPick, getGameById, getWeeklyPickById, getWeeklyPickByUsername, updateWeeklyPick, getParlayPicksByParlayNumberAndWeeklyId} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const parlaysRouter = express.Router();
 
@@ -26,6 +26,16 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
 
     try {
         if (weeklyPick ) {
+            if (parlaynumber == 2) {
+                const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
+                if (firstParlayPicks.length > 2) {
+                    next({
+                        name: "IllegalParlayError",
+                        message: "You can only have 2 parlays if both consist of only 2 picks."
+                    })
+                }
+            }
+
             const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
             if (parlayPick) {
                 res.send({ message: 'You have made a parlay pick!', parlayPick});
