@@ -1,60 +1,51 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePick, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getGameById, updateWeeklyPick} = require('../db');
+const { getAllParlayPicks, getParlayPickById, updateParlayPick, createParlayPick, createWeeklyPick, getGameById, getWeeklyPickById, getWeeklyPickByUsername, updateWeeklyPick} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
-const picksRouter = express.Router();
+const parlaysRouter = express.Router();
 
-picksRouter.get('/', async (req, res) => {
-    const picks = await getAllPicks();
+parlaysRouter.get('/', async (req, res) => {
+    const parlayPicks = await getAllParlayPicks();
 
     res.send({
-        picks
+        parlayPicks
     });
 });
 
-picksRouter.get('/weeklyPicks', async (req, res) => {
-    const weeklypicks = await getAllWeeklyPicks();
+parlaysRouter.get('/parlay/id/:parlayId', async (req, res) => {
+    const { parlayId } = req.params;
+    const parlayPick = await getParlayPickById(parlayId);
 
     res.send({
-        weeklypicks
+        parlayPick
     });
 });
 
-picksRouter.get('/pick/id/:pickId', async (req, res) => {
-    const { pickId } = req.params;
-    const pick = await getPickById(pickId);
-
-    res.send({
-        pick
-    });
-});
-
-picksRouter.post('/addPick', requireUser, async (req, res, next) => {
-    const { gameid, type, bet, text, lock, worth } = req.body;
+parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
+    const { parlaynumber, gameid, type, bet, text } = req.body;
     const weeklyPick = await getWeeklyPickByUsername(req.user.username)
 
     try {
         if (weeklyPick ) {
-            const pick = await createPick({ weeklyid: weeklyPick.id, gameid, type, bet, text, lock, worth });
-            if (pick) {
-                res.send({ message: 'You have made a pick!', pick});
+            const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
+            if (parlayPick) {
+                res.send({ message: 'You have made a parlay pick!', parlayPick});
             } else {
                 res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
             }
         } else if (!weeklyPick) {
             const game = await getGameById(gameid)
             const newWeeklyPick = await createWeeklyPick({ username: req.user.username, week: game.week})
-            const pick = await createPick({ weeklyid: newWeeklyPick.id, gameid, type, bet, text, lock, worth })
-            res.send({ message: 'You have made a pick!', pick});
-
+            const parlayPick = await createParlayPick({ weeklyid: newWeeklyPick.id, parlaynumber, gameid, type, bet, text })
+            res.send({ message: 'You have made a parlay pick!', parlayPick});
         }
     } catch ({ name, message }) {
         next({ name, message })
     }
 });
 
-picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, next) => {
-    const { pickId } = req.params;
-    const { gameid, type, bet, text, lock, worth, pointsawarded } = req.body;
+parlaysRouter.patch('/parlay/id/updateParlayPick/:parlayId', requireUser, async (req, res, next) => {
+    const { parlayId } = req.params;
+    const { parlaynumber, gameid, type, bet, text } = req.body;
     let updateFields = {}
 
     if (gameid) {
@@ -73,25 +64,17 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
         updateFields.text = text;
     }
 
-    if (lock) {
-        updateFields.lock = lock;
-    }
-
-    if (worth) {
-        updateFields.worth = worth;
-    }
-
-    if (pointsawarded) {
-        updateFields.pointsawarded = pointsawarded;
+    if (parlaynumber) {
+        updateFields.parlaynumber = parlaynumber;
     }
     
     try {
-        const pick = await getPickById(pickId);
-        const weeklypick = await getWeeklyPickById(pick.weeklyid)
-        if (pick && weeklypick.username === req.user.username) {
-            let updatedPick = await updatePick(pickId, updateFields)
-            res.send({ pick: updatedPick });
-        } else if (pick && weeklypick.username !== req.user.username) {
+        const parlayPick = await getParlayPickById(parlayId);
+        const weeklypick = await getWeeklyPickById(parlayPick.weeklyid)
+        if (parlayPick && weeklypick.username === req.user.username) {
+            let updatedParlayPick = await updateParlayPick(parlayId, updateFields)
+            res.send({ parlayPick: updatedParlayPick });
+        } else if (parlayPick && weeklypick.username !== req.user.username) {
             next({
                 name: 'UnauthorizedUserError',
                 message: 'You cannot edit a pick that is not yours'
@@ -107,9 +90,9 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
     }
 })
 
-picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async (req, res, next) => {
+parlaysRouter.patch('/parlay/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async (req, res, next) => {
     const { weeklyPickId } = req.params;
-    const { week, active, betscorrect, totalbets, lockscorrect, totallocks, totalpoints } = req.body;
+    const { week, active, betscorrect, totalbets, lockscorrect, totallocks, parlayscorrect, totalparlays, totalpoints } = req.body;
     let updateFields = {}
 
     if (week) {
@@ -139,6 +122,14 @@ picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async
     if (totalpoints) {
         updateFields.totalpoints = totalpoints;
     }
+
+    if (parlayscorrect) {
+        updateFields.parlayscorrect = parlayscorrect;
+    }
+
+    if (totalparlays) {
+        updateFields.totalparlays = totalparlays;
+    }
     
     try {
         const weeklypick = await getWeeklyPickById(weeklyPickId)
@@ -156,4 +147,4 @@ picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async
     }
 })
 
-module.exports = picksRouter;
+module.exports = parlaysRouter;

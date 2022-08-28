@@ -177,7 +177,7 @@ async function getPicksByGameIdAndType(gameid, type) {
 
         return picks;
     } catch (error) {
-        
+        throw error;
     }
 }
 
