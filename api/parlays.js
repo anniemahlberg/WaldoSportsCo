@@ -34,6 +34,13 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
                         message: "You have already made 4 picks for your parlay."
                     })
                 }
+                const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
+                if (secondParlayPicks && firstParlayPicks > 2) {
+                    next({
+                        name: "MaximumPicksReachedError",
+                        message: "Since you have 2 parlays, you can only have 2 picks in each."
+                    })
+                }
             }
 
             if (parlaynumber == 2) {
