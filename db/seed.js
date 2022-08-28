@@ -57,7 +57,6 @@ try {
             time varchar(255),
             duration varchar(255),
             primetime BOOLEAN,
-            value NUMERIC,
             over BOOLEAN,
             under BOOLEAN,
             chalk BOOLEAN,
