@@ -5,7 +5,7 @@ async function createParlayPick({ weeklyid, parlaynumber, gameid, type, bet, tex
         const { rows: [ parlayPick ] } = await client.query(`
             INSERT INTO parlays(weeklyid, parlaynumber, gameid, type, bet, text)
             VALUES ($1, $2, $3, $4, $5, $6)
-            ON CONFLICT (weeklyid, gameid, type) DO NOTHING
+            ON CONFLICT (weeklyid, parlaynumber, gameid, type) DO NOTHING
             RETURNING *;
         `, [weeklyid, parlaynumber, gameid, type, bet, text]);
 

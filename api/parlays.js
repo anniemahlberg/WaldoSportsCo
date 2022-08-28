@@ -31,7 +31,7 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
                 if (firstParlayPicks.length > 2) {
                     next({
                         name: "IllegalParlayError",
-                        message: "You can only have 2 parlays if both consist of only 2 picks."
+                        message: `Your first parlay had ${firstParlayPicks.length} picks, therefore you cannot make a second parlay.`
                     })
                 }
             }

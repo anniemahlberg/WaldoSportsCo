@@ -115,7 +115,7 @@ try {
             text VARCHAR(255) NOT NULL,
             outcome VARCHAR(255) DEFAULT 'tbd',
             outcometext VARCHAR(255) DEFAULT 'tbd',
-            UNIQUE (weeklyid, gameid, type)
+            UNIQUE (weeklyid, parlaynumber, gameid, type)
         );
     `)
 
