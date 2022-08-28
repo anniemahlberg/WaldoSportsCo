@@ -34,47 +34,33 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
                         name: "MaximumPicksReachedError",
                         message: "Since you have 2 parlays, you can only have 2 picks in each."
                     })
-
-                    res.send(null)
-                }
-
-                if (firstParlayPicks && firstParlayPicks.length > 4) {
+                } else if (firstParlayPicks && firstParlayPicks.length > 4) {
                     next({
                         name: "MaximumPicksReachedError",
                         message: "You have already made 4 picks for your parlay."
                     })
-
-                    res.send(null)
                 }
-            }
-
-            if (parlaynumber == 2) {
+            } else if (parlaynumber == 2) {
                 const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
+                const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
                 if (firstParlayPicks && firstParlayPicks.length > 2) {
                     next({
                         name: "IllegalParlayError",
                         message: `Your first parlay had ${firstParlayPicks.length} picks, therefore you cannot make a second parlay.`
                     })
-
-                    res.send(null)
-                }
-
-                const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
-                if (secondParlayPicks && secondParlayPicks.length > 2) {
+                } else if (secondParlayPicks && secondParlayPicks.length > 2) {
                     next({
                         name: "IllegalParlayError",
                         message: `You have already made 2 picks for your second parlay.`
                     })
-
-                    res.send(null)
                 }
-            }
-
-            const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
-            if (parlayPick) {
-                res.send({ message: 'You have made a parlay pick!', parlayPick});
             } else {
-                res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
+                const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
+                if (parlayPick) {
+                    res.send({ message: 'You have made a parlay pick!', parlayPick});
+                } else {
+                    res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
+                }
             }
         } else if (!weeklyPick) {
             const game = await getGameById(gameid)
