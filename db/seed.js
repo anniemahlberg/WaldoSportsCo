@@ -4,13 +4,13 @@ const {
     createUser,
     updateUser,
     createGame,
-    createPointValues
 } = require('./index');
 
 async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
+        DROP TABLE IF EXISTS parlays;
         DROP TABLE IF EXISTS picks;
         DROP TABLE IF EXISTS weeklypicks;
         DROP TABLE IF EXISTS users;
@@ -40,6 +40,8 @@ try {
             totalbets INTEGER DEFAULT 0,
             lockscorrect INTEGER DEFAULT 0,
             totallocks INTEGER DEFAULT 0,
+            parlayscorrect INTEGER DEFAULT 0,
+            totalparlays INTEGER DEFAULT 0,
             totalpoints INTEGER DEFAULT 0
         );
     `);
@@ -79,6 +81,8 @@ try {
             totalbets INTEGER DEFAULT 0,
             lockscorrect INTEGER DEFAULT 0,
             totallocks INTEGER DEFAULT 0,
+            parlayscorrect INTEGER DEFAULT 0,
+            totalparlays INTEGER DEFAULT 0,
             totalpoints INTEGER DEFAULT 0
         );
     `)
@@ -96,6 +100,21 @@ try {
             lock BOOLEAN DEFAULT false,
             worth INTEGER DEFAULT 1,
             pointsawarded INTEGER DEFAULT 0,
+            UNIQUE (weeklyid, gameid, type)
+        );
+    `)
+
+    await client.query(`
+        CREATE TABLE parlays(
+            id SERIAL PRIMARY KEY,
+            weeklyid INTEGER REFERENCES weeklypicks(id),
+            parlaynumber INTEGER DEFAULT 1, 
+            gameid INTEGER REFERENCES games(id),
+            type VARCHAR(255) NOT NULL,
+            bet VARCHAR(255) NOT NULL,
+            text VARCHAR(255) NOT NULL,
+            outcome VARCHAR(255) DEFAULT 'tbd',
+            outcometext VARCHAR(255) DEFAULT 'tbd',
             UNIQUE (weeklyid, gameid, type)
         );
     `)
