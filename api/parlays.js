@@ -39,6 +39,13 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
                         name: "MaximumPicksReachedError",
                         message: "You have already made 4 picks for your parlay."
                     })
+                } else {
+                    const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
+                    if (parlayPick) {
+                        res.send({ message: 'You have made a parlay pick!', parlayPick});
+                    } else {
+                        res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
+                    }
                 }
             } else if (parlaynumber == 2) {
                 const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
@@ -53,13 +60,13 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
                         name: "IllegalParlayError",
                         message: `You have already made 2 picks for your second parlay.`
                     })
-                }
-            } else {
-                const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
-                if (parlayPick) {
-                    res.send({ message: 'You have made a parlay pick!', parlayPick});
                 } else {
-                    res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
+                    const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
+                    if (parlayPick) {
+                        res.send({ message: 'You have made a parlay pick!', parlayPick});
+                    } else {
+                        res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
+                    }
                 }
             }
         } else if (!weeklyPick) {
