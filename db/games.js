@@ -99,8 +99,7 @@ async function getGameById(gameId) {
 async function deleteGame(gameId) {
     try {
         const { rows: [game] } = await client.query(`
-            DELETE *
-            FROM games
+            DELETE FROM games
             WHERE id=$1
         `, [gameId]) 
 
