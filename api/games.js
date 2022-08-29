@@ -64,7 +64,7 @@ gamesRouter.patch('/byWeek/:week', requireAdmin, async (req, res, next) => {
     
     try {
         if (games) {
-            games.forEach((game) => {
+            games.forEach(async (game) => {
                 await updateGame(game.id, {active: false})
             })
 
