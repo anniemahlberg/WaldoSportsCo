@@ -58,6 +58,23 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
     }
 });
 
+gamesRouter.patch('/byWeek/:week', requireAdmin, async (req, res, next) => {
+    const { week } = req.params;
+    const games = await getAllGamesByWeek(week);
+    
+    try {
+        if (games) {
+            games.forEach((game) => {
+                await updateGame(game.id, {active: false})
+            })
+
+            res.send({ message: `You have deactivated all games from week ${week}. Let's' start a new week!`})
+        }
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
 gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
     const { hometeam, awayteam, level, week, date, time, primetime, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active } = req.body;
