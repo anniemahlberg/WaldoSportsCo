@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -333,6 +333,25 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
         }
     } catch ({ name, message }) {
         next({ name, message });
+    }
+})
+
+gamesRouter.delete('/:gameId', async (req, res, next) => {
+    const { gameId } = req.params
+    const game = await getGameById(gameId)
+
+    try {
+        if (game) {
+            await deleteGame(gameId);
+            res.send({message: 'You have deleted a game'})
+        } else {
+            next({
+                name: 'GameNotFoundError',
+                message: 'That game does not exist'
+            })
+        }
+    } catch ({name, message}) {
+        next({name, message})
     }
 })
 
