@@ -106,6 +106,8 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
 
     if (primetime) {
         updateFields.primetime = primetime;
+    } else if (primetime === false) {
+        updateFields.primetime = false
     }
 
     if (duration) {
@@ -114,18 +116,26 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
 
     if (over) {
         updateFields.over = over;
+    } else if (over === false) {
+        updateFields.over = false
     }
 
     if (under) {
         updateFields.under = under;
+    } else if (under === false) {
+        updateFields.under = false
     }
 
     if (chalk) {
         updateFields.chalk = chalk;
+    } else if (chalk === false) {
+        updateFields.chalk = false
     }
 
     if (dog) {
         updateFields.dog = dog;
+    } else if (dog === false) {
+        updateFields.dog = false
     }
 
     if (totalpoints) {
