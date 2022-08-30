@@ -424,7 +424,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                             console.log("old weekly pick", weeklyPick)
                             const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
                             console.log("new weekly pick", updatedwp)
-                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                             console.log("new user", updatedu)
                         }
                         
@@ -462,7 +462,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                             const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
                             console.log("new weekly pick", updatedwp)
 
-                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                             console.log("new user", updatedu)
                         }
                         
