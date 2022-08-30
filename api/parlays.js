@@ -228,7 +228,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                     let parlaystbd = 0;
                     let parlayspush = 0;
     
-                    parlayOnePicks.forEach((parlayPick) => {
+                    parlayOnePicks.forEach(async (parlayPick) => {
                         if (parlayPick.result === "HIT") {
                             parlayshit++;
                         } else if (parlayPick.result === "MISS") {
@@ -240,7 +240,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         }
 
                         if (parlaystbd === 0) {
-                            updateParlayPick(parlayPick.id, {statusupdated: true})
+                            await updateParlayPick(parlayPick.id, {statusupdated: true})
                         }
                     })
 
@@ -285,7 +285,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                     let parlaystbd = 0;
                     let parlayspush = 0;
     
-                    parlayTwoPicks.forEach((parlayPick) => {
+                    parlayTwoPicks.forEach(async (parlayPick) => {
                         if (parlayPick.result === "HIT") {
                             parlayshit++;
                         } else if (parlayPick.result === "MISS") {
@@ -297,7 +297,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         }
 
                         if (parlaystbd === 0) {
-                            updateParlayPick(parlayPick.id, {statusupdated: true})
+                            await updateParlayPick(parlayPick.id, {statusupdated: true})
                         }
                     })
 
