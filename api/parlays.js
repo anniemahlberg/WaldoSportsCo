@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllParlayPicks, getParlayPickById, updateParlayPick, createParlayPick, createWeeklyPick, getGameById, getWeeklyPickById, getWeeklyPickByUsername, updateWeeklyPick, getParlayPicksByParlayNumberAndWeeklyId} = require('../db');
+const { getAllParlayPicks, getParlayPickById, updateParlayPick, createParlayPick, createWeeklyPick, getGameById, getWeeklyPickById, getWeeklyPickByUsername, updateWeeklyPick, getParlayPicksByParlayNumberAndWeeklyId, getAllActiveWeeklyPicksByWeek, updateUser, updateWeeklyPick, getUserByUsername, getParlayPicksByWeeklyId} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const parlaysRouter = express.Router();
 
