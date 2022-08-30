@@ -207,6 +207,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                 const user = await getUserByUsername(weeklyPick.username)
                 const allParlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
                 const parlayOnePicks = allParlayOnePicks.filter((parlayPick) => {!parlayPick.statusupdated})
+                console.log(parlayOnePicks)
 
                 if (parlayOnePicks.length) {
                     let pointsearned = 0;
@@ -237,10 +238,6 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                             parlayspush++
                         } else if (parlayPick.result === "tbd") {
                             parlaystbd++
-                        }
-
-                        if (parlaystbd === 0) {
-                            await updateParlayPick(parlayPick.id, {statusupdated: true})
                         }
                     })
 
