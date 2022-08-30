@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame, getAllWeeklyPicksByWeek } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -61,11 +61,16 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
 gamesRouter.patch('/byWeek/:week', requireAdmin, async (req, res, next) => {
     const { week } = req.params;
     const games = await getAllGamesByWeek(week);
+    const weeklyPicks = await getAllWeeklyPicksByWeek(week);
     
     try {
-        if (games) {
+        if (games && weeklyPicks) {
             games.forEach(async (game) => {
                 await updateGame(game.id, {active: false})
+            })
+
+            weeklyPicks.forEach(async (weeklyPick) => {
+                await updateWeeklyPick(weeklyPick.id, {active: false})
             })
 
             res.send({ message: `You have deactivated all games from week ${week}. Let's' start a new week!`})

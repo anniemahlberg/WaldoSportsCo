@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePick, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getGameById, updateWeeklyPick} = require('../db');
+const { getAllPicks, getPickById, updatePick, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getGameById, updateWeeklyPick, getAllActiveWeeklyPicks} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
@@ -12,7 +12,7 @@ picksRouter.get('/', async (req, res) => {
 });
 
 picksRouter.get('/weeklyPicks', async (req, res) => {
-    const weeklypicks = await getAllWeeklyPicks();
+    const weeklypicks = await getAllActiveWeeklyPicks();
 
     res.send({
         weeklypicks
