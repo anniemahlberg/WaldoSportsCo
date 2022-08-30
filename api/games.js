@@ -1,6 +1,6 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame, getAllWeeklyPicksByWeek, getParlayPicksByGameIdAndType, addOutcomeToParlayPick, getParlayPicksByWeeklyId } = require('../db');
+const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame, getAllWeeklyPicksByWeek, getParlayPicksByGameIdAndType, addOutcomeToParlayPick, getParlayPicksByWeeklyId, getAllActiveWeeklyPicks, getAllActiveWeeklyPicksByWeek } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -344,73 +344,6 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let updatedParlay = await addOutcomeToParlayPick(parlay.id, updateFieldsForParlay);
                         updatedParlays.push(updatedParlay)
 
-                        const weeklypick = await getWeeklyPickById(parlay.weeklyid)
-                        const user = await getUserByUsername(weeklypick.username)
-                        const allParlayPicks = await getParlayPicksByWeeklyId(weeklypick.id);
-                        const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
-                        const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
-                        if (parlayOnePicks) {
-                            let pointsearned = 0;
-                            let pointslost = 0
-
-                            if (allParlayPicks.length === 4) {
-                                pointsearned = 20
-                                pointslost = -4
-                            } else if (allParlayPicks.length === 3) {
-                                pointsearned = 10
-                                pointslost = -3
-                            } else if (allParlayPicks.length === 2) {
-                                pointsearned = 4
-                                pointslost = -2
-                            }
-
-                            let parlayshit = 0;
-                            let parlaysmiss = 0;
-
-                            parlayOnePicks.forEach((parlayPick) => {
-                                if (parlayPick.result === "HIT") {
-                                    parlayshit++;
-                                } else if (parlayPick.result === "MISS") {
-                                    parlaysmiss++;
-                                }
-                            })
-
-                            if (parlaysmiss > 0) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointslost})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                            } else if (parlayshit === parlayOnePicks.length) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointsearned})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-
-                            }
-                            
-                        }
-
-                        if (parlayTwoPicks) {
-                            let pointsearned = 4;
-                            let pointslost = -2;
-                            let parlayshit = 0;
-                            let parlaysmiss = 0;
-
-                            parlayTwoPicks.forEach((parlayPick) => {
-                                if (parlayPick.result === "HIT") {
-                                    parlayshit++;
-                                } else if (parlayPick.result === "MISS") {
-                                    parlaysmiss++;
-                                }
-                            })
-
-                            if (parlaysmiss > 0) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointslost})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                            } else if (parlayshit === parlayOnePicks.length) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointsearned})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-
-                            }
-                            
-                        }
-
                     })
                 }
             }
@@ -436,75 +369,82 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         let updatedParlay = await addOutcomeToParlayPick(parlay.id, updateFieldsForParlay);
                         updatedParlays.push(updatedParlay)
 
-                        const weeklypick = await getWeeklyPickById(parlay.weeklyid)
-                        const user = await getUserByUsername(weeklypick.username)
-                        const allParlayPicks = await getParlayPicksByWeeklyId(weeklypick.id);
-                        const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
-                        const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
-                        if (parlayOnePicks) {
-                            let pointsearned = 0;
-                            let pointslost = 0
-
-                            if (allParlayPicks.length === 4) {
-                                pointsearned = 20
-                                pointslost = -4
-                            } else if (allParlayPicks.length === 3) {
-                                pointsearned = 10
-                                pointslost = -3
-                            } else if (allParlayPicks.length === 2) {
-                                pointsearned = 4
-                                pointslost = -2
-                            }
-
-                            let parlayshit = 0;
-                            let parlaysmiss = 0;
-
-                            parlayOnePicks.forEach((parlayPick) => {
-                                if (parlayPick.result === "HIT") {
-                                    parlayshit++;
-                                } else if (parlayPick.result === "MISS") {
-                                    parlaysmiss++;
-                                }
-                            })
-
-                            if (parlaysmiss > 0) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointslost})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                            } else if (parlayshit === parlayOnePicks.length) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointsearned})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-
-                            }
-                            
-                        }
-
-                        if (parlayTwoPicks) {
-                            let pointsearned = 4;
-                            let pointslost = -2;
-                            let parlayshit = 0;
-                            let parlaysmiss = 0;
-
-                            parlayTwoPicks.forEach((parlayPick) => {
-                                if (parlayPick.result === "HIT") {
-                                    parlayshit++;
-                                } else if (parlayPick.result === "MISS") {
-                                    parlaysmiss++;
-                                }
-                            })
-
-                            if (parlaysmiss > 0) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointslost})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                            } else if (parlayshit === parlayOnePicks.length) {
-                                await updateWeeklyPick(weeklypick.id, {totalpoints: weeklypick.totalpoints + pointsearned})
-                                await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-
-                            }
-                            
-                        }
-
                     })
                 }
+            }
+
+            const allweeklypicks = await getAllActiveWeeklyPicksByWeek(game.week)
+
+            if (allweeklypicks) {
+                allweeklypicks.forEach((weeklyPick) => {
+                    const user = await getUserByUsername(weeklyPick.username)
+                    const allParlayPicks = await getParlayPicksByWeeklyId(weeklyPick.id);
+                    const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
+                    const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
+
+                    if (parlayOnePicks.length) {
+                        let pointsearned = 0;
+                        let pointslost = 0
+        
+                        if (allParlayPicks.length === 4) {
+                            pointsearned = 20
+                            pointslost = -4
+                        } else if (allParlayPicks.length === 3) {
+                            pointsearned = 10
+                            pointslost = -3
+                        } else if (allParlayPicks.length === 2) {
+                            pointsearned = 4
+                            pointslost = -2
+                        }
+        
+                        let parlayshit = 0;
+                        let parlaysmiss = 0;
+        
+                        parlayOnePicks.forEach((parlayPick) => {
+                            if (parlayPick.result === "HIT") {
+                                parlayshit++;
+                            } else if (parlayPick.result === "MISS") {
+                                parlaysmiss++;
+                            }
+                        })
+        
+                        if (parlaysmiss > 0) {
+                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                        } else if (parlayshit === parlayOnePicks.length) {
+                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+        
+                        }
+                        
+                    }
+        
+                    if (parlayTwoPicks.length) {
+                        let pointsearned = 4;
+                        let pointslost = -2;
+                        let parlayshit = 0;
+                        let parlaysmiss = 0;
+        
+                        parlayTwoPicks.forEach((parlayPick) => {
+                            if (parlayPick.result === "HIT") {
+                                parlayshit++;
+                            } else if (parlayPick.result === "MISS") {
+                                parlaysmiss++;
+                            }
+                        })
+        
+                        if (parlaysmiss > 0) {
+                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                        } else if (parlayshit === parlayOnePicks.length) {
+                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+        
+                        }
+                        
+                    }
+
+                })
             }
 
             res.send({ game: updatedGame });
