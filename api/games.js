@@ -456,7 +456,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                             const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                             console.log("new user", updatedu)
 
-                        } else if (parlayshit === parlayOnePicks.length) {
+                        } else if (parlayshit === parlayTwoPicks.length) {
                             console.log("old weekly pick", weeklyPick)
 
                             const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
