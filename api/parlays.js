@@ -29,6 +29,8 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
             if (parlaynumber == 1) {
                 const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
                 const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
+                console.log("first parlay", firstParlayPicks)
+                console.log("second parlay", secondParlayPicks)
                 if (firstParlayPicks && secondParlayPicks && firstParlayPicks.length >= 2) {
                     next({
                         name: "MaximumPicksReachedError",
