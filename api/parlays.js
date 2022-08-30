@@ -206,7 +206,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
                 const allParlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
-                const parlayOnePicks = allParlayOnePicks.filter((parlayPick) => {!parlayPick.statusupdated})
+                const parlayOnePicks = allParlayOnePicks.filter((parlayPick) => {parlayPick.statusupdated === false})
                 console.log(parlayOnePicks)
 
                 if (parlayOnePicks.length) {
@@ -281,7 +281,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
                 const allParlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
-                const parlayTwoPicks = allParlayTwoPicks.filter((parlayPick) => {!parlayPick.statusupdated})
+                const parlayTwoPicks = allParlayTwoPicks.filter((parlayPick) => {parlayPick.statusupdated === false})
 
                 if (parlayTwoPicks.length) {
                     let pointsearned = 4;
