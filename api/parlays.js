@@ -238,6 +238,10 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         } else if (parlayPick.result === "tbd") {
                             parlaystbd++
                         }
+
+                        if (parlaystbd === 0) {
+                            updateParlayPick(parlayPick.id, {statusupdated: true})
+                        }
                     })
 
                     if (parlaystbd > 0) {
@@ -290,6 +294,10 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                             parlayspush++
                         } else if (parlayPick.result === "tbd") {
                             parlaystbd++
+                        }
+
+                        if (parlaystbd === 0) {
+                            updateParlayPick(parlayPick.id, {statusupdated: true})
                         }
                     })
 
