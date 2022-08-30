@@ -282,7 +282,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
                 const allParlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
-                const parlayTwoPicks = allParlayTwoPicks.filter((parlayPick) => {!parlayPick.statsupdated})
+                const parlayTwoPicks = allParlayTwoPicks.filter(parlayPick => parlayPick.statsupdated === false)
 
                 if (parlayTwoPicks.length) {
                     let pointsearned = 4;
