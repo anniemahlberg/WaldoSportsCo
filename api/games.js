@@ -207,57 +207,60 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                 if (picksToUpdate) {
                     let updatedPicks = []
                     picksToUpdate.forEach(async pick => {
-                        let updateFieldsForPick = {
-                            outcome: lineoutcome,
-                            outcometext: lineoutcometext
+                        if (!pick.statsupdated) {
+                            let updateFieldsForPick = {
+                                outcome: lineoutcome,
+                                outcometext: lineoutcometext,
+                                statsupdated: true
+                            }
+    
+                            if (pick.bet === lineoutcome) {
+                                updateFieldsForPick.pointsawarded = pick.worth
+                            } else if (lineoutcome === "push") {
+                                updateFieldsForPick.pointsawarded = 0;
+                            } else {
+                                updateFieldsForPick.pointsawarded = -pick.worth;
+                            }
+    
+                            let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
+                            updatedPicks.push(updatedPick)
+    
+                            const weeklypick = await getWeeklyPickById(pick.weeklyid)
+                            let weeklyPickUpdateFields = {}
+                            weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
+                            weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
+    
+                            if (updateFieldsForPick.pointsawarded > 0) {
+                                weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
+                            }
+    
+                            if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                                weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
+                                weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
+                            } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                                weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
+                            }
+    
+                            await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
+    
+                            const user = await getUserByUsername(weeklypick.username)
+                            let userUpdateFields = {}
+                            userUpdateFields.totalbets =  user.totalbets + 1;
+                            userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+    
+                            if (updateFieldsForPick.pointsawarded > 0) {
+                                userUpdateFields.betscorrect = user.betscorrect + 1;
+                            }
+    
+                            if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                                userUpdateFields.lockscorrect = user.lockscorrect + 1;
+                                userUpdateFields.totallocks = user.totallocks + 1;
+                            } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                                userUpdateFields.totallocks = user.totallocks + 1;
+                            }
+    
+                            await updateUser(user.id, userUpdateFields)
                         }
-
-                        if (pick.bet === lineoutcome) {
-                            updateFieldsForPick.pointsawarded = pick.worth
-                        } else if (lineoutcome === "push") {
-                            updateFieldsForPick.pointsawarded = 0;
-                        } else {
-                            updateFieldsForPick.pointsawarded = -pick.worth;
-                        }
-
-                        let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
-                        updatedPicks.push(updatedPick)
-
-                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        let weeklyPickUpdateFields = {}
-                        weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
-                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
-
-                        if (updateFieldsForPick.pointsawarded > 0) {
-                            weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
-                        }
-
-                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
-                            weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
-                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
-                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        }
-
-                        await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
-
-                        const user = await getUserByUsername(weeklypick.username)
-                        let userUpdateFields = {}
-                        userUpdateFields.totalbets =  user.totalbets + 1;
-                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
-
-                        if (updateFieldsForPick.pointsawarded > 0) {
-                            userUpdateFields.betscorrect = user.betscorrect + 1;
-                        }
-
-                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
-                            userUpdateFields.lockscorrect = user.lockscorrect + 1;
-                            userUpdateFields.totallocks = user.totallocks + 1;
-                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
-                            userUpdateFields.totallocks = user.totallocks + 1;
-                        }
-
-                        await updateUser(user.id, userUpdateFields)
 
                     })
                 }
@@ -268,57 +271,61 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                 if (picksToUpdate) {
                     let updatedPicks = []
                     picksToUpdate.forEach(async pick => {
-                        let updateFieldsForPick = {
-                            outcome: totalpointsoutcome,
-                            outcometext: totalpointsoutcometext
+                        if (!pick.statsupdated) {
+                            let updateFieldsForPick = {
+                                outcome: totalpointsoutcome,
+                                outcometext: totalpointsoutcometext,
+                                statsupdated: true
+                            }
+    
+                            if (pick.bet === totalpointsoutcome) {
+                                updateFieldsForPick.pointsawarded = pick.worth
+                            } else if (totalpointsoutcome === "push") {
+                                updateFieldsForPick.pointsawarded = 0;
+                            } else {
+                                updateFieldsForPick.pointsawarded = -pick.worth;
+                            }
+    
+                            let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
+                            updatedPicks.push(updatedPick)
+    
+                            const weeklypick = await getWeeklyPickById(pick.weeklyid)
+                            let weeklyPickUpdateFields = {}
+                            weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
+                            weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
+    
+                            if (updateFieldsForPick.pointsawarded > 0) {
+                                weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
+                            }
+    
+                            if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                                weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
+                                weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
+                            } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                                weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
+                            }
+    
+                            await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
+    
+                            const user = await getUserByUsername(weeklypick.username)
+                            let userUpdateFields = {}
+                            userUpdateFields.totalbets =  user.totalbets + 1;
+                            userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
+    
+                            if (updateFieldsForPick.pointsawarded > 0) {
+                                userUpdateFields.betscorrect = user.betscorrect + 1;
+                            }
+    
+                            if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
+                                userUpdateFields.lockscorrect = user.lockscorrect + 1;
+                                userUpdateFields.totallocks = user.totallocks + 1;
+                            } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
+                                userUpdateFields.totallocks = user.totallocks + 1;
+                            }
+    
+                            await updateUser(user.id, userUpdateFields)
+
                         }
-
-                        if (pick.bet === totalpointsoutcome) {
-                            updateFieldsForPick.pointsawarded = pick.worth
-                        } else if (totalpointsoutcome === "push") {
-                            updateFieldsForPick.pointsawarded = 0;
-                        } else {
-                            updateFieldsForPick.pointsawarded = -pick.worth;
-                        }
-
-                        let updatedPick = await addOutcomeToPick(pick.id, updateFieldsForPick);
-                        updatedPicks.push(updatedPick)
-
-                        const weeklypick = await getWeeklyPickById(pick.weeklyid)
-                        let weeklyPickUpdateFields = {}
-                        weeklyPickUpdateFields.totalbets =  weeklypick.totalbets + 1;
-                        weeklyPickUpdateFields.totalpoints = weeklypick.totalpoints + updateFieldsForPick.pointsawarded;
-
-                        if (updateFieldsForPick.pointsawarded > 0) {
-                            weeklyPickUpdateFields.betscorrect = weeklypick.betscorrect + 1;
-                        }
-
-                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
-                            weeklyPickUpdateFields.lockscorrect = weeklypick.lockscorrect + 1;
-                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
-                            weeklyPickUpdateFields.totallocks = weeklypick.totallocks + 1;
-                        }
-
-                        await updateWeeklyPick(weeklypick.id, weeklyPickUpdateFields)
-
-                        const user = await getUserByUsername(weeklypick.username)
-                        let userUpdateFields = {}
-                        userUpdateFields.totalbets =  user.totalbets + 1;
-                        userUpdateFields.totalpoints = user.totalpoints + updateFieldsForPick.pointsawarded;
-
-                        if (updateFieldsForPick.pointsawarded > 0) {
-                            userUpdateFields.betscorrect = user.betscorrect + 1;
-                        }
-
-                        if (pick.lock && updateFieldsForPick.pointsawarded > 0) {
-                            userUpdateFields.lockscorrect = user.lockscorrect + 1;
-                            userUpdateFields.totallocks = user.totallocks + 1;
-                        } else if (pick.lock && updateFieldsForPick.pointsawarded < 0) {
-                            userUpdateFields.totallocks = user.totallocks + 1;
-                        }
-
-                        await updateUser(user.id, userUpdateFields)
                     })
                 }
             }

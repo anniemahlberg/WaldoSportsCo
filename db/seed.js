@@ -99,6 +99,7 @@ try {
             lock BOOLEAN DEFAULT false,
             worth INTEGER DEFAULT 1,
             pointsawarded INTEGER DEFAULT 0,
+            statsupdated BOOLEAN DEFAULT FALSE,
             UNIQUE (weeklyid, gameid, type)
         );
     `)
@@ -115,6 +116,7 @@ try {
             outcome VARCHAR(255) DEFAULT 'tbd',
             outcometext VARCHAR(255) DEFAULT 'tbd',
             result VARCHAR(255) DEFAULT 'tbd',
+            statsupdated BOOLEAN DEFAULT FALSE,
             UNIQUE (weeklyid, parlaynumber, gameid, type)
         );
     `)

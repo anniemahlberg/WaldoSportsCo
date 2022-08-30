@@ -205,7 +205,8 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
-                const parlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
+                const allParlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
+                const parlayOnePicks = allParlayOnePicks.filter((parlayPick) => {!parlayPick.statusupdated})
 
                 if (parlayOnePicks.length) {
                     let pointsearned = 0;
@@ -239,24 +240,16 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         }
                     })
 
-                    console.log(user, "hit", parlayshit, "miss", parlaysmiss)
                     if (parlaystbd > 0) {
                         return;
                     } else if (parlaysmiss > 0) {
-                        console.log("old weekly pick", weeklyPick)
-                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
-                        console.log("new weekly pick", updatedwp)
-                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                        await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
-                        const updatedu = await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateUser(user.id, {totalparlays: user.totalparlays + 1})
                     } else if (parlayshit === parlayOnePicks.length) {
-                        console.log("old weekly pick", weeklyPick)
-                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
-                        console.log("new weekly pick", updatedwp)
-                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                        await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                     }
                     
                 }
@@ -277,7 +270,8 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
-                const parlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
+                const allParlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
+                const parlayTwoPicks = allParlayTwoPicks.filter((parlayPick) => {!parlayPick.statusupdated})
 
                 if (parlayTwoPicks.length) {
                     let pointsearned = 4;
@@ -299,24 +293,16 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         }
                     })
 
-                    console.log(user, "hit", parlayshit, "miss", parlaysmiss)
                     if (parlaystbd > 0) {
                         return;
                     } else if (parlaysmiss > 0) {
-                        console.log("old weekly pick", weeklyPick)
-                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
-                        console.log("new weekly pick", updatedwp)
-                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                        await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
-                        const updatedu = await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateUser(user.id, {totalparlays: user.totalparlays + 1})
                     } else if (parlayshit === parlayOnePicks.length) {
-                        console.log("old weekly pick", weeklyPick)
-                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
-                        console.log("new weekly pick", updatedwp)
-                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu)
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                        await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                     }
                     
                 }
