@@ -376,7 +376,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
             const allweeklypicks = await getAllActiveWeeklyPicksByWeek(game.week)
 
             if (allweeklypicks) {
-                allweeklypicks.forEach((weeklyPick) => {
+                allweeklypicks.forEach(async (weeklyPick) => {
                     const user = await getUserByUsername(weeklyPick.username)
                     const allParlayPicks = await getParlayPicksByWeeklyId(weeklyPick.id);
                     const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
