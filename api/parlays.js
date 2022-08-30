@@ -197,7 +197,7 @@ parlaysRouter.patch('/parlay/id/updateWeeklyPick/:weeklyPickId', requireAdmin, a
     }
 })
 
-parlaysRouter.patch('/updateResults', requireAdmin, async (req, res, next) => {
+parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, next) => {
     const { week } = req.body;
 
     try {
@@ -205,13 +205,7 @@ parlaysRouter.patch('/updateResults', requireAdmin, async (req, res, next) => {
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
-                const allParlayPicks = await getParlayPicksByWeeklyId(weeklyPick.id);
-                const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
-                const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
-                console.log("user", user)
-                console.log("all parlays", allParlayPicks)
-                console.log("parlay 1", parlayOnePicks)
-                console.log("parlay 2", parlayTwoPicks)
+                const parlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
 
                 if (parlayOnePicks.length) {
                     let pointsearned = 0;
@@ -266,7 +260,25 @@ parlaysRouter.patch('/updateResults', requireAdmin, async (req, res, next) => {
                     }
                     
                 }
-    
+            })
+        }
+
+        res.send({message: "Parlay 1 points added!"})
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
+parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, next) => {
+    const { week } = req.body;
+
+    try {
+        const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
+        if (allweeklypicks) {
+            allweeklypicks.forEach(async (weeklyPick) => {
+                const user = await getUserByUsername(weeklyPick.username)
+                const parlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
+
                 if (parlayTwoPicks.length) {
                     let pointsearned = 4;
                     let pointslost = -2;
@@ -292,35 +304,30 @@ parlaysRouter.patch('/updateResults', requireAdmin, async (req, res, next) => {
                         return;
                     } else if (parlaysmiss > 0) {
                         console.log("old weekly pick", weeklyPick)
-
                         const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
                         console.log("new weekly pick", updatedwp)
-
                         const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                         console.log("new user", updatedu)
-
                     } else if (parlayspush > 0) {
                         const updatedu = await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                        console.log("new user", updatedu) 
-                    } else if (parlayshit === parlayTwoPicks.length) {
+                        console.log("new user", updatedu)
+                    } else if (parlayshit === parlayOnePicks.length) {
                         console.log("old weekly pick", weeklyPick)
-
                         const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
                         console.log("new weekly pick", updatedwp)
-
                         const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                         console.log("new user", updatedu)
                     }
                     
                 }
-
             })
         }
 
-        res.send({message: "Parlay points added!"})
+        res.send({message: "Parlay 2 points added!"})
     } catch ({name, message}) {
         next({name, message})
     }
 })
+
 
 module.exports = parlaysRouter;
