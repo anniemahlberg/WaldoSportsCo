@@ -184,12 +184,11 @@ parlaysRouter.patch('/parlay/id/updateWeeklyPick/:weeklyPickId', requireAdmin, a
     }
 })
 
-parlaysRouter.patch('/updateResults', async (req, res, next) => {
+parlaysRouter.patch('/updateResults', requireAdmin, async (req, res, next) => {
+    const { week } = req.body;
 
     try {
-
-        const allweeklypicks = await getAllActiveWeeklyPicksByWeek(game.week)
-
+        const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
@@ -305,7 +304,7 @@ parlaysRouter.patch('/updateResults', async (req, res, next) => {
             })
         }
 
-        
+        res.send({message: "Parlay points added!"})
     } catch ({name, message}) {
         next({name, message})
     }
