@@ -381,6 +381,10 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                     const allParlayPicks = await getParlayPicksByWeeklyId(weeklyPick.id);
                     const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
                     const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
+                    console.log("user", user)
+                    console.log("all parlays", allParlayPicks)
+                    console.log("parlay 1", parlayOnePicks)
+                    console.log("parlay 2", parlayTwoPicks)
 
                     if (parlayOnePicks.length) {
                         let pointsearned = 0;
@@ -407,14 +411,21 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                                 parlaysmiss++;
                             }
                         })
+
+                        console.log(user, "hit", parlayshit, "miss", parlaysmiss)
         
                         if (parlaysmiss > 0) {
-                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
-                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                            console.log("old weekly pick", weeklyPick)
+                            const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                            console.log("new weekly pick", updatedwp)
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                            console.log("new user", updatedu)
                         } else if (parlayshit === parlayOnePicks.length) {
-                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
-                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-        
+                            console.log("old weekly pick", weeklyPick)
+                            const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                            console.log("new weekly pick", updatedwp)
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                            console.log("new user", updatedu)
                         }
                         
                     }
@@ -432,14 +443,27 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                                 parlaysmiss++;
                             }
                         })
+
+                        console.log(user, "hit", parlayshit, "miss", parlaysmiss)
+
         
                         if (parlaysmiss > 0) {
-                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
-                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                            console.log("old weekly pick", weeklyPick)
+
+                            const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                            console.log("new weekly pick", updatedwp)
+
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                            console.log("new user", updatedu)
+
                         } else if (parlayshit === parlayOnePicks.length) {
-                            await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
-                            await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-        
+                            console.log("old weekly pick", weeklyPick)
+
+                            const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                            console.log("new weekly pick", updatedwp)
+
+                            const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                            console.log("new user", updatedu)
                         }
                         
                     }
