@@ -20,7 +20,7 @@ async function createUser({ username, password, firstname, lastname, email, venm
 async function getAllUsers() {
     try {
         const { rows: users } = await client.query(
-            `SELECT id, username, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks
+            `SELECT id, username, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks, parlayscorrect, totalparlays
             FROM users;
             `);
         
@@ -85,7 +85,7 @@ async function getUserByUsername(username) {
 async function getAllUserStats() {
     try {
         const { rows: users } = await client.query(`
-            SELECT username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints
+            SELECT username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints, parlayscorrect, totalparlays
             FROM users;
         `)
 
