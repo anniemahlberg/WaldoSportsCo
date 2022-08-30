@@ -12,7 +12,7 @@ const { getAllParlayPicks,
         getAllActiveWeeklyPicksByWeek, 
         updateUser, 
         getUserByUsername, 
-        getParlayPicksByWeeklyId} = require('../db');
+        } = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const parlaysRouter = express.Router();
 
@@ -295,20 +295,25 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         } else if (parlayPick.result === "tbd") {
                             parlaystbd++
                         }
-
-                        if (parlaystbd === 0) {
-                            await updateParlayPick(parlayPick.id, {statusupdated: true})
-                        }
                     })
 
                     if (parlaystbd > 0) {
                         return;
                     } else if (parlaysmiss > 0) {
+                        parlayTwoPicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
+                        parlayTwoPicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateUser(user.id, {totalparlays: user.totalparlays + 1})
                     } else if (parlayshit === parlayOnePicks.length) {
+                        parlayTwoPicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                     }
