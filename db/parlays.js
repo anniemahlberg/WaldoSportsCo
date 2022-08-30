@@ -170,5 +170,5 @@ module.exports = {
     getParlayPicksByGameId,
     getParlayPicksByGameIdAndType,
     getParlayPicksByParlayNumber,
-    getParlayPicksByParlayNumberAndWeeklyId
+    getParlayPicksByParlayNumberAndWeeklyId,
 }
