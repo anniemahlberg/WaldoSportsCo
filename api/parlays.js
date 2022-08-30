@@ -184,4 +184,131 @@ parlaysRouter.patch('/parlay/id/updateWeeklyPick/:weeklyPickId', requireAdmin, a
     }
 })
 
+parlaysRouter.patch('/updateResults', async (req, res, next) => {
+
+    try {
+
+        const allweeklypicks = await getAllActiveWeeklyPicksByWeek(game.week)
+
+        if (allweeklypicks) {
+            allweeklypicks.forEach(async (weeklyPick) => {
+                const user = await getUserByUsername(weeklyPick.username)
+                const allParlayPicks = await getParlayPicksByWeeklyId(weeklyPick.id);
+                const parlayOnePicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 1)
+                const parlayTwoPicks = allParlayPicks.filter(parlayPick => parlayPick.parlaynumber == 2)
+                console.log("user", user)
+                console.log("all parlays", allParlayPicks)
+                console.log("parlay 1", parlayOnePicks)
+                console.log("parlay 2", parlayTwoPicks)
+
+                if (parlayOnePicks.length) {
+                    let pointsearned = 0;
+                    let pointslost = 0
+    
+                    if (parlayOnePicks.length === 4) {
+                        pointsearned = 20
+                        pointslost = -4
+                    } else if (parlayOnePicks.length === 3) {
+                        pointsearned = 10
+                        pointslost = -3
+                    } else if (parlayOnePicks.length === 2) {
+                        pointsearned = 4
+                        pointslost = -2
+                    }
+    
+                    let parlayshit = 0;
+                    let parlaysmiss = 0;
+                    let parlaystbd = 0;
+                    let parlayspush = 0;
+    
+                    parlayOnePicks.forEach((parlayPick) => {
+                        if (parlayPick.result === "HIT") {
+                            parlayshit++;
+                        } else if (parlayPick.result === "MISS") {
+                            parlaysmiss++;
+                        } else if (parlayPick.result === "PUSH") {
+                            parlayspush++
+                        } else if (parlayPick.result === "tbd") {
+                            parlaystbd++
+                        }
+                    })
+
+                    console.log(user, "hit", parlayshit, "miss", parlaysmiss)
+                    if (parlaystbd > 0) {
+                        return;
+                    } else if (parlaysmiss > 0) {
+                        console.log("old weekly pick", weeklyPick)
+                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                        console.log("new weekly pick", updatedwp)
+                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu)
+                    } else if (parlayspush > 0) {
+                        const updatedu = await updateUser(user.id, {totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu)
+                    } else if (parlayshit === parlayOnePicks.length) {
+                        console.log("old weekly pick", weeklyPick)
+                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                        console.log("new weekly pick", updatedwp)
+                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu)
+                    }
+                    
+                }
+    
+                if (parlayTwoPicks.length) {
+                    let pointsearned = 4;
+                    let pointslost = -2;
+                    let parlayshit = 0;
+                    let parlaysmiss = 0;
+                    let parlaystbd = 0;
+                    let parlayspush = 0;
+    
+                    parlayTwoPicks.forEach((parlayPick) => {
+                        if (parlayPick.result === "HIT") {
+                            parlayshit++;
+                        } else if (parlayPick.result === "MISS") {
+                            parlaysmiss++;
+                        } else if (parlayPick.result === "PUSH") {
+                            parlayspush++
+                        } else if (parlayPick.result === "tbd") {
+                            parlaystbd++
+                        }
+                    })
+
+                    console.log(user, "hit", parlayshit, "miss", parlaysmiss)
+                    if (parlaystbd > 0) {
+                        return;
+                    } else if (parlaysmiss > 0) {
+                        console.log("old weekly pick", weeklyPick)
+
+                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                        console.log("new weekly pick", updatedwp)
+
+                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu)
+
+                    } else if (parlayspush > 0) {
+                        const updatedu = await updateUser(user.id, {totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu) 
+                    } else if (parlayshit === parlayTwoPicks.length) {
+                        console.log("old weekly pick", weeklyPick)
+
+                        const updatedwp = await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                        console.log("new weekly pick", updatedwp)
+
+                        const updatedu = await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                        console.log("new user", updatedu)
+                    }
+                    
+                }
+
+            })
+        }
+
+        
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
 module.exports = parlaysRouter;
