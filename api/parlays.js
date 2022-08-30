@@ -206,7 +206,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
                 const allParlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
-                const parlayOnePicks = allParlayOnePicks.filter((parlayPick) => {parlayPick.statsupdated === false})
+                const parlayOnePicks = allParlayOnePicks.filter(parlayPick => parlayPick.statsupdated === false)
                 console.log(allParlayOnePicks)
                 console.log(parlayOnePicks)
 
