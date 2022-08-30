@@ -247,11 +247,20 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                     if (parlaystbd > 0) {
                         return;
                     } else if (parlaysmiss > 0) {
+                        parlayOnePicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
+                        parlayOnePicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateUser(user.id, {totalparlays: user.totalparlays + 1})
                     } else if (parlayshit === parlayOnePicks.length) {
+                        parlayOnePicks.forEach(async (parlayPick) => {
+                            await updateParlayPick(parlayPick.id, {statsupdated: true})
+                        })
                         await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                     }
