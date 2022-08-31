@@ -19,7 +19,8 @@ async function getAllParlayPicks() {
     try {
         const { rows: parlayPicks } = await client.query(`
             SELECT *
-            FROM parlays;
+            FROM parlays
+            ORDER BY id;
         `);
         
         return parlayPicks;
@@ -33,7 +34,8 @@ async function getParlayPicksByWeeklyId(weeklyid) {
         const { rows: parlayPicks } = await client.query(`
             SELECT *
             FROM parlays
-            WHERE weeklyid=$1;
+            WHERE weeklyid=$1
+            ORDER BY id;
         `, [weeklyid]);
 
         return parlayPicks;
@@ -47,7 +49,8 @@ async function getParlayPickById(parlayPickId) {
         const { rows: [ parlayPick ]} = await client.query(`
             SELECT *
             FROM parlays
-            WHERE id=$1;
+            WHERE id=$1
+            ORDER BY id;
         `, [parlayPickId])
 
         return parlayPick;
@@ -61,7 +64,8 @@ async function getParlayPicksByGameId(gameid) {
         const { rows: parlayPicks } = await client.query(`
             SELECT *
             FROM parlays
-            WHERE gameid=$1;
+            WHERE gameid=$1
+            ORDER BY id;
         `, [gameid])
 
         return parlayPicks
@@ -75,7 +79,8 @@ async function getParlayPicksByGameIdAndType(gameid, type) {
         const { rows: parlayPicks } = await client.query(`
             SELECT *
             FROM parlays
-            WHERE gameid=$1 AND type=$2;
+            WHERE gameid=$1 AND type=$2
+            ORDER BY id;
         `, [gameid, type])
 
         return parlayPicks;
@@ -89,7 +94,8 @@ async function getParlayPicksByParlayNumber(parlaynumber) {
         const { rows: parlayPicks } = await client.query(`
             SELECT *
             FROM parlays
-            WHERE parlaynumber=$1;
+            WHERE parlaynumber=$1
+            ORDER BY id;
         `, [parlaynumber])
 
         return parlayPicks;
@@ -103,7 +109,8 @@ async function getParlayPicksByParlayNumberAndWeeklyId(parlaynumber, weeklyid) {
         const { rows: parlayPicks } = await client.query(`
             SELECT * 
             FROM parlays
-            WHERE parlaynumber=$1 AND weeklyid=$2;
+            WHERE parlaynumber=$1 AND weeklyid=$2
+            ORDER BY id;
         `, [parlaynumber, weeklyid])
 
         return parlayPicks;

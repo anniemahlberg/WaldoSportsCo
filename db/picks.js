@@ -33,7 +33,8 @@ async function getAllPicks() {
     try {
         const { rows: picks } = await client.query(`
             SELECT *
-            FROM picks;
+            FROM picks
+            ORDER BY id;
         `);
         
         return picks;
@@ -46,7 +47,8 @@ async function getAllWeeklyPicks() {
     try {
         const { rows: weeklypicks } = await client.query(`
             SELECT *
-            FROM weeklypicks;
+            FROM weeklypicks
+            ORDER BY id;
         `)
 
         return weeklypicks;
@@ -60,7 +62,8 @@ async function getAllActiveWeeklyPicks() {
         const { rows: weeklypicks } = await client.query(`
             SELECT *
             FROM weeklypicks
-            WHERE active=true;
+            WHERE active=true
+            ORDER BY id;
         `)
 
         return weeklypicks;
@@ -74,7 +77,8 @@ async function getAllWeeklyPicksByWeek(week) {
         const { rows: weeklypicks } = await client.query(`
             SELECT *
             FROM weeklypicks
-            WHERE week=$1;
+            WHERE week=$1
+            ORDER BY id;
         `, [week])
 
         return weeklypicks
@@ -88,7 +92,8 @@ async function getAllActiveWeeklyPicksByWeek(week) {
        const { rows: weeklypicks } = await client.query(`
             SELECT *
             FROM weeklypicks
-            WHERE week=$1 AND active=true;
+            WHERE week=$1 AND active=true
+            ORDER BY id;
        `, [week])
 
        return weeklypicks
@@ -102,7 +107,8 @@ async function getPicksByWeeklyId(weeklyid) {
         const { rows: picks } = await client.query(`
             SELECT *
             FROM picks
-            WHERE weeklyid=$1;
+            WHERE weeklyid=$1
+            ORDER BY id;
         `, [weeklyid]);
 
         return picks;
@@ -116,7 +122,8 @@ async function getWeeklyPickByUsername(username) {
         const { rows: [pick] } = await client.query(`
             SELECT *
             FROM weeklypicks
-            WHERE username=$1 AND active=true;
+            WHERE username=$1 AND active=true
+            ORDER BY id;
         `, [username])
         
         return pick;
@@ -130,7 +137,8 @@ async function getPickById(pickId) {
         const { rows: [ pick ]} = await client.query(`
             SELECT *
             FROM picks
-            WHERE id=$1;
+            WHERE id=$1
+            ORDER BY id;
         `, [pickId])
 
         return pick;
@@ -144,7 +152,8 @@ async function getWeeklyPickById(weeklyid) {
         const { rows: [weeklypick] } = await client.query(`
             SELECT *
             FROM weeklypicks
-            WHERE id=$1;
+            WHERE id=$1
+            ORDER BY id;
         `, [weeklyid])
 
         return weeklypick
@@ -158,7 +167,8 @@ async function getPicksByGameId(gameid) {
         const { rows: picks } = await client.query(`
             SELECT *
             FROM picks
-            WHERE gameid=$1;
+            WHERE gameid=$1
+            ORDER BY id;
         `, [gameid])
 
         return picks
@@ -172,7 +182,8 @@ async function getPicksByGameIdAndType(gameid, type) {
         const { rows: picks } = await client.query(`
             SELECT *
             FROM picks
-            WHERE gameid=$1 AND type=$2;
+            WHERE gameid=$1 AND type=$2
+            ORDER BY id;
         `, [gameid, type])
 
         return picks;

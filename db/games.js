@@ -17,7 +17,8 @@ async function getAllGames() {
     try {
         const { rows: games } = await client.query(`
             SELECT *
-            FROM games;
+            FROM games
+            ORDER BY id;
             `);
         
         return games;
@@ -31,7 +32,8 @@ async function getAllActiveGames() {
         const { rows: games } = await client.query(`
             SELECT *
             FROM games
-            WHERE active=true;
+            WHERE active=true
+            ORDER BY id;
         `)
 
         return games;
@@ -45,7 +47,8 @@ async function getAllGamesByWeek(week) {
         const { rows: games } = await client.query(`
             SELECT *
             FROM games
-            WHERE week=$1;
+            WHERE week=$1
+            ORDER BY id;
         `, [week])
 
         return games;
@@ -83,7 +86,8 @@ async function getGameById(gameId) {
         const { rows: [ game ]} = await client.query(`
             SELECT *
             FROM games
-            WHERE id=${ gameId };
+            WHERE id=${ gameId }
+            ORDER BY id;
         `)
 
         if (!game) {
@@ -100,7 +104,7 @@ async function deleteGame(gameId) {
     try {
         const { rows: [game] } = await client.query(`
             DELETE FROM games
-            WHERE id=$1
+            WHERE id=$1;
         `, [gameId]) 
 
         return game;
