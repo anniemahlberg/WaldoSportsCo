@@ -145,9 +145,9 @@ try {
     await createUser({username: 'annie123', password: 'pass123', firstname: 'annie', lastname: 'mahl', email: 'annie@email.com', venmo: 'venmouser'})
     await createUser({username: 'nicktynick', password: 'pass123', firstname: 'nick', lastname: 'han', email: 'nick@email.com', venmo: 'venmouser2'})
     await updateUser(1, {venmo: 'venmo2', admin: true})
-    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", week:1,  date: "2022-08-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
-    await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", week:1, date: "2022-08-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
-    await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", week:1, date: "2022-08-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
+    await createGame({hometeam: "chiefs", awayteam: "raiders", level: "NFL", week:1,  date: "2022-09-10", time: "12:00", duration: "full-game", over: true, under: true, chalk: true, dog: true, totalpoints: 27.5, favoredteam: "home", line: 7.5, primetime: false, value: 1});
+    await createGame({hometeam: "royals", awayteam: "yankees", level: "MLB", week:1, date: "2022-09-15", time: "19:00", duration: "full-game", over: true, under: true, chalk: false, dog: false, totalpoints: 5.5, favoredteam: "away", line: 0, primetime: true, value: 2});
+    await createGame({hometeam: "sporting kc", awayteam: "austin fc", level: "MLS", week:1, date: "2022-09-21", time: "15:00", duration: "first-half", over: true, under: true, chalk: true, dog: true, totalpoints: 2.5, favoredteam: "home", line: 0.5, primetime: false, value: 1});
 } catch (error) {
     console.error("Error testing database!");
     throw error;
