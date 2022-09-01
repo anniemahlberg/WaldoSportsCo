@@ -158,4 +158,23 @@ picksRouter.patch('/pick/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async
     }
 })
 
+picksRouter.delete('/deletePick/:pickId', requireUser, async (req, res, next) => {
+    const { pickId } = req.params
+    const pick = await getPickById(pickId)
+
+    try {
+        if (pick) {
+            await deletePick(pickId);
+            res.send({message: 'You have deleted your pick'})
+        } else {
+            next({
+                name: 'PickNotFoundError',
+                message: 'That pick does not exist'
+            })
+        }
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
 module.exports = picksRouter;
