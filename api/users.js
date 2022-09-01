@@ -114,8 +114,10 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
         updateFields.venmo = venmo;
     }
 
-    if (admin) {
-        updateFields.admin = admin;
+    if (admin === true) {
+        updateFields.admin = true;
+    } else if (admin === false) {
+        updateFields.admin = false
     }
 
     if (betscorrect) {
