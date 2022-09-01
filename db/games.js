@@ -102,6 +102,16 @@ async function getGameById(gameId) {
 
 async function deleteGame(gameId) {
     try {
+        await client.query(`
+            DELETE FROM picks
+            WHERE gameid=$1;
+        `, [gameId])
+
+        await client.query(`
+            DELETE FROM parlays
+            WHERE gameid=$1
+        `, [gameId])
+        
         const { rows: [game] } = await client.query(`
             DELETE FROM games
             WHERE id=$1;
@@ -109,7 +119,7 @@ async function deleteGame(gameId) {
 
         return game;
     } catch (error) {
-        
+        throw error
     }
 }
 

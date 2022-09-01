@@ -264,6 +264,19 @@ async function addOutcomeToPick(id, fields = {}) {
     }
 }
 
+async function deletePick(pickId) {
+    try {
+       const { rows: [pick] } = await client.query(`
+            DELETE FROM picks
+            WHERE id=$1
+       `, [pickId]) 
+
+       return pick;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     createWeeklyPick,
     createPick,
@@ -280,5 +293,6 @@ module.exports = {
     getWeeklyPickById,
     getWeeklyPickByUsername,
     getPicksByGameId,
-    getPicksByGameIdAndType
+    getPicksByGameIdAndType,
+    deletePick
 }
