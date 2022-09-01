@@ -73,8 +73,10 @@ picksRouter.patch('/pick/id/updatePick/:pickId', requireUser, async (req, res, n
         updateFields.text = text;
     }
 
-    if (lock) {
-        updateFields.lock = lock;
+    if (lock && lock === true) {
+        updateFields.lock = true;
+    } else if (lock === false) {
+        updateFields.lock = false
     }
 
     if (worth) {
