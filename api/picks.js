@@ -1,5 +1,15 @@
 const express = require('express');
-const { getAllPicks, getPickById, updatePick, createPick, getWeeklyPickByUsername, getAllWeeklyPicks, createWeeklyPick, getWeeklyPickById, getGameById, updateWeeklyPick, getAllActiveWeeklyPicks, deletePick} = require('../db');
+const { getAllPicks, 
+        getPickById, 
+        updatePick, 
+        createPick, 
+        getWeeklyPickByUsername, 
+        createWeeklyPick, 
+        getWeeklyPickById, 
+        getGameById, 
+        updateWeeklyPick, 
+        getAllActiveWeeklyPicks, 
+        deletePick} = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const picksRouter = express.Router();
 
