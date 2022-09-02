@@ -141,7 +141,7 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
         if (user && user.username === req.user.username) {
             let updatedUser = await updatePicks(userId, updateFields)
             res.send({ user: updatedUser });
-        } else if (user && user.username !== req.user.username) {
+        } else if (user && (user.username !== req.user.username) || !req.user.admin) {
             next({
                 name: 'UnauthorizedUserError',
                 message: 'You cannot edit a user that is not you'
