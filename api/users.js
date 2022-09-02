@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats } = require('../db');
+const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats, updateUser } = require('../db');
 const { requireUser } = require('./utils')
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
@@ -138,9 +138,8 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     
     try {
         const user = await getUserById(userId);
-        console.log(user)
         if ((user && user.username === req.user.username) || (user && req.user.admin)) {
-            let updatedUser = await updatePicks(userId, updateFields)
+            let updatedUser = await updateUser(userId, updateFields)
             res.send({ user: updatedUser });
         } else if (user && (user.username !== req.user.username)) {
             next({
