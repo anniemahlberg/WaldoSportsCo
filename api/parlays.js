@@ -337,10 +337,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
 
 parlaysRouter.delete('/deleteParlay/:parlayId', requireUser, async (req, res, next) => {
     const { parlayId } = req.params
-    console.log(parlayId)
     const parlay = await getParlayPickById(parlayId)
-
-    console.log(parlay)
 
     try {
         if (parlay) {

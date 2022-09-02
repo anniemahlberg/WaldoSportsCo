@@ -172,7 +172,7 @@ async function deleteParlay(parlayId) {
        const { rows: [parlayPick] } = await client.query(`
             DELETE FROM parlays
             WHERE id=$1
-       `, [parlayPick]) 
+       `, [parlayId]) 
 
        return parlayPick;
     } catch (error) {
