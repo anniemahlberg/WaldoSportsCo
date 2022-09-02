@@ -44,14 +44,14 @@ async function getParlayPicksByWeeklyId(weeklyid) {
     }
 }
 
-async function getParlayPickById(parlayPickId) {
+async function getParlayPickById(parlayId) {
     try {
         const { rows: [ parlayPick ]} = await client.query(`
             SELECT *
             FROM parlays
             WHERE id=$1
             ORDER BY id;
-        `, [parlayPickId])
+        `, [parlayId])
 
         return parlayPick;
     } catch (error) {
