@@ -139,7 +139,7 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     try {
         const user = await getUserById(userId);
         console.log(user)
-        if ((user && user.username === req.user.username) || (user && user.admin)) {
+        if ((user && user.username === req.user.username) || (user && req.user.admin)) {
             let updatedUser = await updatePicks(userId, updateFields)
             res.send({ user: updatedUser });
         } else if (user && (user.username !== req.user.username)) {
