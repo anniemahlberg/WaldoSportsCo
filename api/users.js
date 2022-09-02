@@ -41,17 +41,24 @@ usersRouter.post('/login', async (req, res, next) => {
 
     try {
         const user = await getUserByUsername(username);
-        const hashedPassword = user.password;
-        const isValid = await bcrypt.compare(password, hashedPassword)
-        const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET)
+        if (user) {
+            const hashedPassword = user.password;
+            const isValid = await bcrypt.compare(password, hashedPassword)
+            const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET)
 
-        if (user && isValid) {
-            res.send({ message: "you're logged in!", token: token, user})
-        } else {
+            if (user && isValid) {
+                res.send({ message: "you're logged in!", token: token, user})
+            } else {
+                next({
+                    name: 'IncorrectCredentialsError',
+                    message: 'Password is incorrect'
+                });
+            }
+        } else if (!user) {
             next({
                 name: 'IncorrectCredentialsError',
-                message: 'Username or password is incorrect'
-            });
+                message: 'There is no user by that username'
+            })
         }
 
     } catch (error) {
