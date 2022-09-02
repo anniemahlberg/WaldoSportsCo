@@ -11,7 +11,8 @@ const { getAllParlayPicks,
         getParlayPicksByParlayNumberAndWeeklyId, 
         getAllActiveWeeklyPicksByWeek, 
         updateUser, 
-        getUserByUsername, 
+        getUserByUsername,
+        deleteParlay, 
         } = require('../db');
 const { requireUser, requireAdmin } = require('./utils');
 const parlaysRouter = express.Router();
@@ -329,6 +330,25 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
         }
 
         res.send({message: "Parlay 2 points added!"})
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
+parlaysRouter.delete('/deleteParlay/:parlayId', requireUser, async (req, res, next) => {
+    const { parlayId } = req.params
+    const parlayPick = await getParlayPickById(parlayId)
+
+    try {
+        if (parlayPick) {
+            await deleteParlay(parlayId);
+            res.send({message: 'You have deleted your parlay'})
+        } else {
+            next({
+                name: 'ParlayNotFoundError',
+                message: 'That parlay does not exist'
+            })
+        }
     } catch ({name, message}) {
         next({name, message})
     }

@@ -167,6 +167,19 @@ async function addOutcomeToParlayPick(id, fields = {}) {
     }
 }
 
+async function deleteParlay(parlayId) {
+    try {
+       const { rows: [parlayPick] } = await client.query(`
+            DELETE FROM parlays
+            WHERE id=$1
+       `, [parlayPick]) 
+
+       return parlayPick;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     createParlayPick,
     getAllParlayPicks,
@@ -178,4 +191,5 @@ module.exports = {
     getParlayPicksByGameIdAndType,
     getParlayPicksByParlayNumber,
     getParlayPicksByParlayNumberAndWeeklyId,
+    deleteParlay
 }
