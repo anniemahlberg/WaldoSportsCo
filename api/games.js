@@ -385,7 +385,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
         } else if (game) {
             next({
                 name: 'UnauthorizedUserError',
-                message: 'You cannot update games'
+                message: 'You are not allowed to update games'
             })
         } else {
             next({
