@@ -99,11 +99,25 @@ async function getAllUserStats() {
     }
 }
 
+async function deleteUser(userId) {
+    try {
+        const { rows: [user] } = await client.query(`
+            DELETE FROM users
+            WHERE id=$1
+        `, [userId]) 
+
+       return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     createUser,
     getAllUsers,
     getUserById,
     getUserByUsername,
     updateUser,
-    getAllUserStats
+    getAllUserStats,
+    deleteUser
 }

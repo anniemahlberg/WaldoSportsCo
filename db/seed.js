@@ -73,7 +73,7 @@ try {
     await client.query(`
         CREATE TABLE weeklypicks(
             id SERIAL PRIMARY KEY,
-            username VARCHAR(255) REFERENCES users(username),
+            username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
             week INTEGER NOT NULL,
             active BOOLEAN DEFAULT true,
             betscorrect INTEGER DEFAULT 0,
@@ -89,8 +89,8 @@ try {
     await client.query(`
         CREATE TABLE picks(
             id SERIAL PRIMARY KEY,
-            weeklyid INTEGER REFERENCES weeklypicks(id),
-            gameid INTEGER REFERENCES games(id),
+            weeklyid INTEGER REFERENCES weeklypicks(id) ON DELETE CASCADE,
+            gameid INTEGER REFERENCES games(id) ON DELETE CASCADE,
             type VARCHAR(255) NOT NULL,
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,

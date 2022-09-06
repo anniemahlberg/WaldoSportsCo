@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats, updateUser, getWeeklyPickByUsername, getAllWeeklyPicksByUsername, updateWeeklyPick } = require('../db');
-const { requireUser } = require('./utils')
+const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats, updateUser, getWeeklyPickByUsername, getAllWeeklyPicksByUsername, updateWeeklyPick, deleteUser } = require('../db');
+const { requireUser, requireAdmin } = require('./utils')
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
 
@@ -146,14 +146,6 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     try {
         const user = await getUserById(userId);
         if ((user && user.username === req.user.username) || (user && req.user.admin)) {
-            if (updateFields.username) {
-                const weeklyPicks = await getAllWeeklyPicksByUsername(updateFields.username)
-                if (weeklyPicks) {
-                    weeklyPicks.forEach(async (weeklyPick) => {
-                        await updateWeeklyPick(weeklyPick.id, {username: updateFields.username})
-                    })
-                }
-            }
             let updatedUser = await updateUser(userId, updateFields)
             res.send({ user: updatedUser });
         } else if (user && (user.username !== req.user.username)) {
@@ -169,6 +161,25 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
         }
     } catch ({ name, message }) {
         next({ name, message });
+    }
+})
+
+usersRouter.delete('/:userId', requireAdmin, async (req, res, next) => {
+    const { userId } = req.params
+    const user = await getUserById(userId)
+
+    try {
+        if (user) {
+            await deleteUser(userId);
+            res.send({message: 'You have deleted this user', user})
+        } else {
+            next({
+                name: 'UserNotFoundError',
+                message: 'That user does not exist'
+            })
+        }
+    } catch ({name, message}) {
+        next({name, message})
     }
 })
 
