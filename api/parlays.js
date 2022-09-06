@@ -255,7 +255,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         })
                         await updateWeeklyPick(weeklyPick.id, {totalparlays: weeklyPick.totalparlays + 1})
                         await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                    } else if (parlayshit === parlayOnePicks.length) {
+                    } else if (parlayshit === allParlayOnePicks.length) {
                         parlayOnePicks.forEach(async (parlayPick) => {
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
