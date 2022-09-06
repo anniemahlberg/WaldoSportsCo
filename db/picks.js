@@ -132,6 +132,21 @@ async function getWeeklyPickByUsername(username) {
     }
 }
 
+async function getAllWeeklyPicksByUsername(username) {
+    try {
+        const { rows: picks } = await client.query(`
+            SELECT *
+            FROM weeklypicks
+            WHERE username=$1
+            ORDER BY id;
+        `, [username])
+        
+        return picks;
+    } catch(error) {
+        throw error;
+    }
+}
+
 async function getPickById(pickId) {
     try {
         const { rows: [ pick ]} = await client.query(`
@@ -294,5 +309,6 @@ module.exports = {
     getWeeklyPickByUsername,
     getPicksByGameId,
     getPicksByGameIdAndType,
-    deletePick
+    deletePick,
+    getAllWeeklyPicksByUsername
 }
