@@ -209,17 +209,17 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                 const allParlayOnePicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
                 const parlayOnePicks = allParlayOnePicks.filter(parlayPick => parlayPick.statsupdated === false)
 
-                if (parlayOnePicks.length) {
+                if (allParlayOnePicks.length) {
                     let pointsearned = 0;
                     let pointslost = 0
     
-                    if (parlayOnePicks.length === 4) {
+                    if (allParlayOnePicks.length === 4) {
                         pointsearned = 20
                         pointslost = -4
-                    } else if (parlayOnePicks.length === 3) {
+                    } else if (allParlayOnePicks.length === 3) {
                         pointsearned = 10
                         pointslost = -3
-                    } else if (parlayOnePicks.length === 2) {
+                    } else if (allParlayOnePicks.length === 2) {
                         pointsearned = 4
                         pointslost = -2
                     }
