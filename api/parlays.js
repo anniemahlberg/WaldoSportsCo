@@ -247,7 +247,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         parlayOnePicks.forEach(async (parlayPick) => {
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost, totalyparlays: weeklyPick.totalparlays + 1})
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost, totalparlays: weeklyPick.totalparlays + 1})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
                         parlayOnePicks.forEach(async (parlayPick) => {
@@ -310,7 +310,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         parlayTwoPicks.forEach(async (parlayPick) => {
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost})
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost, totalparlays: weeklyPick.totalparlays + 1})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
                     } else if (parlayspush > 0) {
                         parlayTwoPicks.forEach(async (parlayPick) => {
@@ -321,7 +321,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         parlayTwoPicks.forEach(async (parlayPick) => {
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned})
+                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned, parlayscorrect: weeklyPick.parlayscorrect + 1, totalparlays: weeklyPick.totalparlays + 1})
                         await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
                     }
                     
