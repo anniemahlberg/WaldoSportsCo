@@ -241,7 +241,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                         }
                     })
 
-                    if (parlaystbd > 0) {
+                    if (parlaystbd > 0 || !parlayOnePicks.length) {
                         return;
                     } else if (parlaysmiss > 0) {
                         parlayOnePicks.forEach(async (parlayPick) => {
@@ -284,7 +284,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                 const allParlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
                 const parlayTwoPicks = allParlayTwoPicks.filter(parlayPick => parlayPick.statsupdated === false)
 
-                if (parlayTwoPicks.length) {
+                if (allParlayTwoPicks.length) {
                     let pointsearned = 4;
                     let pointslost = -2;
                     let parlayshit = 0;
@@ -292,7 +292,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                     let parlaystbd = 0;
                     let parlayspush = 0;
     
-                    parlayTwoPicks.forEach(async (parlayPick) => {
+                    allParlayTwoPicks.forEach(async (parlayPick) => {
                         if (parlayPick.result === "HIT") {
                             parlayshit++;
                         } else if (parlayPick.result === "MISS") {
@@ -304,7 +304,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                         }
                     })
 
-                    if (parlaystbd > 0) {
+                    if (parlaystbd > 0 || !parlayTwoPicks.length) {
                         return;
                     } else if (parlaysmiss > 0) {
                         parlayTwoPicks.forEach(async (parlayPick) => {
