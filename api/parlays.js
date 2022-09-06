@@ -317,7 +317,7 @@ parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, nex
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
                         await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                    } else if (parlayshit === parlayOnePicks.length) {
+                    } else if (parlayshit === allParlayTwoPicks.length) {
                         parlayTwoPicks.forEach(async (parlayPick) => {
                             await updateParlayPick(parlayPick.id, {statsupdated: true})
                         })
