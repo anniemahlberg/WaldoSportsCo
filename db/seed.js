@@ -107,9 +107,9 @@ try {
     await client.query(`
         CREATE TABLE parlays(
             id SERIAL PRIMARY KEY,
-            weeklyid INTEGER REFERENCES weeklypicks(id),
+            weeklyid INTEGER REFERENCES weeklypicks(id) ON DELETE CASCADE,
             parlaynumber INTEGER DEFAULT 1, 
-            gameid INTEGER REFERENCES games(id),
+            gameid INTEGER REFERENCES games(id) ON DELETE CASECADE,
             type VARCHAR(255) NOT NULL,
             bet VARCHAR(255) NOT NULL,
             text VARCHAR(255) NOT NULL,

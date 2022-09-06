@@ -229,7 +229,7 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                     let parlaystbd = 0;
                     let parlayspush = 0;
     
-                    parlayOnePicks.forEach(async (parlayPick) => {
+                    allParlayOnePicks.forEach(async (parlayPick) => {
                         if (parlayPick.result === "HIT") {
                             parlayshit++;
                         } else if (parlayPick.result === "MISS") {
