@@ -42,37 +42,10 @@ parlaysRouter.post('/addParlayPick', requireUser, async (req, res, next) => {
         if (weeklyPick ) {
             if (parlaynumber == 1) {
                 const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
-                const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
-                if (firstParlayPicks.length && secondParlayPicks.length && firstParlayPicks.length >= 2) {
+                if (firstParlayPicks.length && firstParlayPicks.length >= 6) {
                     next({
                         name: "MaximumPicksReachedError",
-                        message: "Since you have 2 parlays, you can only have 2 picks in each."
-                    })
-                } else if (firstParlayPicks.length && firstParlayPicks.length >= 4) {
-                    next({
-                        name: "MaximumPicksReachedError",
-                        message: "You have already made 4 picks for your parlay."
-                    })
-                } else {
-                    const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
-                    if (parlayPick) {
-                        res.send({ message: 'You have made a parlay pick!', parlayPick});
-                    } else {
-                        res.send({message: `You have already made a ${type} pick for this game!`, name: "DuplicatePickError"})
-                    }
-                }
-            } else if (parlaynumber == 2) {
-                const firstParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(1, weeklyPick.id);
-                const secondParlayPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id)
-                if (firstParlayPicks && firstParlayPicks.length > 2) {
-                    next({
-                        name: "IllegalParlayError",
-                        message: `Your first parlay had ${firstParlayPicks.length} picks, therefore you cannot make a second parlay.`
-                    })
-                } else if (secondParlayPicks && secondParlayPicks.length >= 2) {
-                    next({
-                        name: "IllegalParlayError",
-                        message: `You have already made 2 picks for your second parlay.`
+                        message: "You have already made 6 picks for your parlay."
                     })
                 } else {
                     const parlayPick = await createParlayPick({ weeklyid: weeklyPick.id, parlaynumber, gameid, type, bet, text });
@@ -222,6 +195,12 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
                     } else if (allParlayOnePicks.length === 2) {
                         pointsearned = 4
                         pointslost = -2
+                    } else if (allParlayOnePicks.length === 5) {
+                        pointsearned = 30
+                        pointslost = -5
+                    } else if (allParlayOnePicks.length === 6) {
+                        pointsearned = 60
+                        pointslost = -6
                     }
     
                     let parlayshit = 0;
@@ -268,68 +247,6 @@ parlaysRouter.patch('/updateResults/parlay1', requireAdmin, async (req, res, nex
         }
 
         res.send({message: "Parlay 1 points added!"})
-    } catch ({name, message}) {
-        next({name, message})
-    }
-})
-
-parlaysRouter.patch('/updateResults/parlay2', requireAdmin, async (req, res, next) => {
-    const { week } = req.body;
-
-    try {
-        const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
-        if (allweeklypicks) {
-            allweeklypicks.forEach(async (weeklyPick) => {
-                const user = await getUserByUsername(weeklyPick.username)
-                const allParlayTwoPicks = await getParlayPicksByParlayNumberAndWeeklyId(2, weeklyPick.id);
-                const parlayTwoPicks = allParlayTwoPicks.filter(parlayPick => parlayPick.statsupdated === false)
-
-                if (allParlayTwoPicks.length) {
-                    let pointsearned = 4;
-                    let pointslost = -2;
-                    let parlayshit = 0;
-                    let parlaysmiss = 0;
-                    let parlaystbd = 0;
-                    let parlayspush = 0;
-    
-                    allParlayTwoPicks.forEach(async (parlayPick) => {
-                        if (parlayPick.result === "HIT") {
-                            parlayshit++;
-                        } else if (parlayPick.result === "MISS") {
-                            parlaysmiss++;
-                        } else if (parlayPick.result === "PUSH") {
-                            parlayspush++
-                        } else if (parlayPick.result === "tbd") {
-                            parlaystbd++
-                        }
-                    })
-
-                    if (parlaystbd > 0 || !parlayTwoPicks.length) {
-                        return;
-                    } else if (parlaysmiss > 0) {
-                        parlayTwoPicks.forEach(async (parlayPick) => {
-                            await updateParlayPick(parlayPick.id, {statsupdated: true})
-                        })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost, totalparlays: weeklyPick.totalparlays + 1})
-                        await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
-                    } else if (parlayspush > 0) {
-                        parlayTwoPicks.forEach(async (parlayPick) => {
-                            await updateParlayPick(parlayPick.id, {statsupdated: true})
-                        })
-                        await updateUser(user.id, {totalparlays: user.totalparlays + 1})
-                    } else if (parlayshit === allParlayTwoPicks.length) {
-                        parlayTwoPicks.forEach(async (parlayPick) => {
-                            await updateParlayPick(parlayPick.id, {statsupdated: true})
-                        })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned, parlayscorrect: weeklyPick.parlayscorrect + 1, totalparlays: weeklyPick.totalparlays + 1})
-                        await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
-                    }
-                    
-                }
-            })
-        }
-
-        res.send({message: "Parlay 2 points added!"})
     } catch ({name, message}) {
         next({name, message})
     }
