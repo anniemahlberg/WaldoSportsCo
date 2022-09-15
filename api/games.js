@@ -159,15 +159,11 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
         updateFields.active = active;
     }
 
-    console.log("updatefields", updateFields)
-
     try {
         const game = await getGameById(gameId);
-        console.log("game", game)
 
         if (game) {
             let updatedGame = await updateGame(gameId, updateFields)
-            console.log("updated game", updatedGame)
             res.send({ game: updatedGame });
         } else if (game) {
             next({

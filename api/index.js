@@ -4,6 +4,7 @@ const usersRouter = require('./users');
 const gamesRouter = require('./games');
 const picksRouter = require('./picks');
 const parlaysRouter = require('./parlays');
+const potRouter = require('./pot');
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../db');
 const { JWT_SECRET } = process.env;
@@ -38,6 +39,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/games', gamesRouter);
 apiRouter.use('/picks', picksRouter);
 apiRouter.use('/parlays', parlaysRouter);
+apiRouter.use('/pot', potRouter);
 
 apiRouter.use((error, req, res, next) => {
     res.send({
