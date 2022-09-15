@@ -2,8 +2,7 @@ const client = require('./client');
 
 const {
     addPotAmount,
-    editPotAmount,
-    deletePotAmount
+    getPotAmountByWeek
 } = require('./index');
 const { getAllPotAmounts } = require('./pot');
 

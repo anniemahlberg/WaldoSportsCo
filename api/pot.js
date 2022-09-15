@@ -13,7 +13,7 @@ potRouter.get('/', async (req, res) => {
 potRouter.get('/week/:week', async (req, res) => {
     const { week } = req.params;
 
-    const potAmount = await getPotAmountByWeek(week);
+    const potAmount = await getPotAmountByWeek(Number(week));
     res.send({
         potAmount
     });
