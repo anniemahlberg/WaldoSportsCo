@@ -47,8 +47,8 @@ potRouter.post('/add', requireAdmin, async (req, res, next) => {
     }
 });
 
-potRouter.patch('/id/:id', requireAdmin, async (req, res, next) => {
-    const { id } = req.params;
+potRouter.patch('/week/:week', requireAdmin, async (req, res, next) => {
+    const { week } = req.params;
     const { amount } = req.body;
     let updateFields = {};
 
@@ -57,10 +57,10 @@ potRouter.patch('/id/:id', requireAdmin, async (req, res, next) => {
     }
 
     try {
-        const pot = await getPotById(id);
+        const pot = await getPotAmountByWeek(week);
 
         if (pot) {
-            let updatedPot = await editPotAmount(id, updateFields)
+            let updatedPot = await editPotAmount(pot.id, updateFields)
             res.send({ pot: updatedPot });
         } else if (pot) {
             next({

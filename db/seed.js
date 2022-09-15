@@ -5,6 +5,7 @@ const {
     editPotAmount,
     deletePotAmount
 } = require('./index');
+const { getAllPotAmounts } = require('./pot');
 
 async function dropTables() {
 try {
@@ -50,9 +51,7 @@ try {
 async function testDB() {
 try {
     console.log('STARTING DATABASE');
-    const newPot = await addPotAmount(1, 260)
-    console.log("pot:", newPot)
-
+    await addPotAmount(1, 260)
 } catch (error) {
     console.error("Error testing database!");
     throw error;
