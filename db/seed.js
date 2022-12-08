@@ -23,7 +23,7 @@ try {
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
             message VARCHAR(255) NOT NULL,
-            time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             likes INTEGER DEFAULT 0
         );
     `);
