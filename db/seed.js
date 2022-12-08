@@ -1,4 +1,5 @@
 const client = require('./client');
+const { createPost, getAllPosts, updatePost, deletePost, likePost } = require('./posts');
 
 async function dropTables() {
 try {
@@ -45,6 +46,15 @@ try {
 async function testDB() {
 try {
     console.log('STARTING DATABASE');
+    const post1 = await createPost('StankyLines', 'This is my first post');
+    const post2 = await createPost('Kyle', 'this is MY first post');
+    const allPosts = await getAllPosts();
+    console.log("initial posts: ", allPosts)
+    const updatePost1 = await updatePost(1, 'Actually, I want it to say this')
+    const deletePost2 = await deletePost(2);
+    const likePost1 = likePost(1);
+    const newPosts = await getAllPosts();
+    console.log("new posts:", newPosts);
 } catch (error) {
     console.error("Error testing database!");
     throw error;

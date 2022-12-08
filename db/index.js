@@ -3,5 +3,6 @@ module.exports = {
     ...require('./picks'),
     ...require('./games'),
     ...require('./parlays'),
-    ...require('./pot')
+    ...require('./pot'),
+    ...require('./posts')
 }
