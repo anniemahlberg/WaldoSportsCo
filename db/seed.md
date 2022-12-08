@@ -10,6 +10,7 @@ async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
+        DROP TABLE IF EXISTS posts;
         DROP TABLE IF EXISTS parlays;
         DROP TABLE IF EXISTS picks;
         DROP TABLE IF EXISTS weeklypicks;
@@ -130,6 +131,17 @@ try {
             amount INTEGER NOT NULL
         );
     `)
+
+    await client.query(`
+    CREATE TABLE posts(
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+        message VARCHAR(255) NOT NULL,
+        time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        likes INTEGER DEFAULT 0,
+        names VARCHAR(255)[]
+    );
+`);
 
     console.log('Finished building tables!')
 } catch (error) {
