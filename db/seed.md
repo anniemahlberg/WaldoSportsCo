@@ -15,6 +15,8 @@ try {
         DROP TABLE IF EXISTS weeklypicks;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS games;
+        DROP TABLE IF EXISTS liopot;
+
     `);
     console.log('Finished dropping tables!')
 } catch (error) {
@@ -118,6 +120,14 @@ try {
             result VARCHAR(255) DEFAULT 'tbd',
             statsupdated BOOLEAN DEFAULT FALSE,
             UNIQUE (weeklyid, parlaynumber, gameid, type)
+        );
+    `)
+
+    await client.query(`
+        CREATE TABLE liopot(
+            id SERIAL PRIMARY KEY,
+            week INTEGER NOT NULL,
+            amount INTEGER NOT NULL
         );
     `)
 

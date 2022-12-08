@@ -1,16 +1,10 @@
 const client = require('./client');
 
-const {
-    addPotAmount,
-    getPotAmountByWeek
-} = require('./index');
-const { getAllPotAmounts } = require('./pot');
-
 async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
-        DROP TABLE IF EXISTS liopot;
+        DROP TABLE IF EXISTS posts;
     `);
     console.log('Finished dropping tables!')
 } catch (error) {
@@ -23,13 +17,14 @@ async function createTables() {
 try {
     console.log('Starting to build tables...')
     await client.query(`
-        CREATE TABLE liopot(
+        CREATE TABLE posts(
             id SERIAL PRIMARY KEY,
-            week INTEGER NOT NULL,
-            amount INTEGER NOT NULL
+            username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+            message VARCHAR(255) NOT NULL,
+            time TIMESTAMP,
+            likes INTEGER DEFAULT 0
         );
     `);
-
     console.log('Finished building tables!')
 } catch (error) {
     console.error('Error building tables!')
@@ -50,7 +45,6 @@ try {
 async function testDB() {
 try {
     console.log('STARTING DATABASE');
-    await addPotAmount(1, 260)
 } catch (error) {
     console.error("Error testing database!");
     throw error;
