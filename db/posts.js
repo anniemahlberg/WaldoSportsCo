@@ -1,6 +1,6 @@
 const client = require('./client')
 
-async function createPost({ username, message}) {
+async function createPost({username, message}) {
     try {
         const { rows: [ post ] } = await client.query(`
             INSERT INTO posts(username, message)
@@ -82,14 +82,16 @@ async function updatePost(id, fields = {}) {
     }
 }
 
-async function likePost(id) {
+async function likePost(postId) {
     try {
         const { rows: [ post ] } = await client.query(`
             UPDATE posts
-            SET likes = likes + 1
-            WHERE id=${id}
+            SET likes=likes+1
+            WHERE id=$1
             RETURNING *
-        `, [id])
+        `, [postId])
+
+        return post;
     } catch (error) {
         throw error;
     }

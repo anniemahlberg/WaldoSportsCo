@@ -43,7 +43,7 @@ postsRouter.post('/addPost', requireUser, async (req, res, next) => {
 
     try {
         if (username) {
-            const post = await createPost(username, message);
+            const post = await createPost({username, message});
             res.send({ message: 'you have added a new post!', post});
         } else {
             next({
