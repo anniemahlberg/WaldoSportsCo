@@ -88,11 +88,12 @@ postsRouter.patch('/post/id/updatePost/:postId', requireUser, async (req, res, n
 
 postsRouter.patch('/post/id/likePost/:postId', requireUser, async (req, res, next) => {
     const { postId } = req.params;
+    const username = req.user.username;
     
     try {
         const post = await getPostById(postId);
         if (post) {
-            let likedPost = await likePost(postId)
+            let likedPost = await likePost(postId, username)
             res.send({ post: likedPost });
         } else {
             next({

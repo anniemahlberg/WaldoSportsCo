@@ -24,7 +24,8 @@ try {
             username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
             message VARCHAR(255) NOT NULL,
             time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-            likes INTEGER DEFAULT 0
+            likes INTEGER DEFAULT 0,
+            names VARCHAR(255)[]
         );
     `);
     console.log('Finished building tables!')
@@ -53,10 +54,11 @@ try {
     const allPosts = await getAllPosts();
     console.log("initial posts: ", allPosts)
     const updatePost1 = await updatePost(1, {message: 'Actually, I want it to say this'})
-    const likePost1 = await likePost(1);
-    await likePost(2);
-    await likePost(2);
-    await likePost(2);
+    const likePost1 = await likePost(1, 'Tpeter');
+    const likePost1again = await likePost(1, 'Kyle');
+    await likePost(2, 'Drew');
+    await likePost(2, 'Nick');
+    await likePost(2, 'Alyssa');
     const newPosts = await getAllPosts();
     console.log("new posts:", newPosts);
 } catch (error) {

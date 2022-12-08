@@ -82,14 +82,14 @@ async function updatePost(id, fields = {}) {
     }
 }
 
-async function likePost(postId) {
+async function likePost(postId, username) {
     try {
         const { rows: [ post ] } = await client.query(`
             UPDATE posts
-            SET likes=likes+1
+            SET likes=likes+1, names=array_append(names, $2)
             WHERE id=$1
             RETURNING *
-        `, [postId])
+        `, [postId, username])
 
         return post;
     } catch (error) {
