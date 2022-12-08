@@ -19,7 +19,7 @@ async function getAllPosts() {
         const { rows: posts } = await client.query(`
             SELECT *
             FROM posts
-            ORDER BY id;
+            ORDER BY id DESC;
         `);
         
         return posts;
