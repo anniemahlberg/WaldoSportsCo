@@ -17,7 +17,7 @@ async function createPost({username, message}) {
 async function getAllPosts() {
     try {
         const { rows: posts } = await client.query(`
-            SELECT id, username, message, to_char(time, 'yyyy-MM-dd HH24:MI:SS.MS'), likes
+            SELECT *
             FROM posts
             ORDER BY id;
         `);
