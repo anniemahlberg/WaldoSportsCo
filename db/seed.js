@@ -24,13 +24,6 @@ async function createTables() {
 async function alterTables() {
     try {
         console.log('Starting to alter tables...')
-        await client.query(`
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS wins  INTEGER DEFAULT 0;
-
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS currentwinner BOOLEAN DEFAULT FALSE;
-        `)
         console.log('Finished altering tables!')
     } catch (error) {
         console.error('Error altering tables!')
