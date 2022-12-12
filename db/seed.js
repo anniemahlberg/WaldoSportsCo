@@ -1,5 +1,4 @@
 const client = require('./client');
-const { makeUserCurrentWinner } = require('./users');
 
 async function dropTables() {
     try {

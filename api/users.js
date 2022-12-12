@@ -94,7 +94,7 @@ usersRouter.post('/register', async (req, res, next) => {
 
 usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     const { userId } = req.params;
-    const { username, password, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks  } = req.body;
+    const { username, password, firstname, lastname, email, venmo, admin, betscorrect, totalbets, lockscorrect, totallocks, wins, currentwinner } = req.body;
     let updateFields = {}
 
     if (username) {
@@ -142,6 +142,10 @@ usersRouter.patch('/:userId', requireUser, async (req, res, next) => {
     if (totallocks) {
         updateFields.totallocks = totallocks;
     }
+
+    if (wins) {
+        updateFields.wins = wins;
+    }
     
     try {
         const user = await getUserById(userId);
@@ -170,6 +174,8 @@ usersRouter.patch('/makeWinner/:userId', requireAdmin, async (req, res, next) =>
 
     try {
         if (user) {
+            const allUsers = await getAllUsers();
+            allUsers.forEach(async (user) => await updateUser(user.id, {currentwinner: false}))
             await makeUserCurrentWinner(userId);
             res.send({message: `You have made ${user.username} this week's winner!`})
         } else {
