@@ -31,6 +31,21 @@ async function getAllUsers() {
     }
 }
 
+async function makeUserCurrentWinner(id) {
+    try {
+        const { rows: [ user ] } = await client.query(`
+            UPDATE users
+            SET currentwinner=TRUE, wins=wins+1
+            WHERE id=$1
+            RETURNING *;
+        `, [id]);
+
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function updateUser(id, fields = {}) {
     const keys = Object.keys(fields);
     const setString = keys.map(
@@ -117,6 +132,7 @@ module.exports = {
     getAllUsers,
     getUserById,
     getUserByUsername,
+    makeUserCurrentWinner,
     updateUser,
     getAllUserStats,
     deleteUser
