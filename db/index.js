@@ -4,5 +4,6 @@ module.exports = {
     ...require('./games'),
     ...require('./parlays'),
     ...require('./pot'),
-    ...require('./posts')
+    ...require('./posts'),
+    ...require('./picksix')
 }

@@ -10,6 +10,7 @@ async function dropTables() {
 try {
     console.log('Starting to drop tables...')
     await client.query(`
+        DROP TABLE IF EXISTS picksix;
         DROP TABLE IF EXISTS posts;
         DROP TABLE IF EXISTS parlays;
         DROP TABLE IF EXISTS picks;
@@ -45,7 +46,9 @@ try {
             totallocks INTEGER DEFAULT 0,
             parlayscorrect INTEGER DEFAULT 0,
             totalparlays INTEGER DEFAULT 0,
-            totalpoints INTEGER DEFAULT 0
+            totalpoints INTEGER DEFAULT 0,
+            picksixcorrect INTEGER DEFAULT 0,
+            totalpicksix INTEGER DEFAULT 0
         );
     `);
 
@@ -85,7 +88,9 @@ try {
             totallocks INTEGER DEFAULT 0,
             parlayscorrect INTEGER DEFAULT 0,
             totalparlays INTEGER DEFAULT 0,
-            totalpoints INTEGER DEFAULT 0
+            totalpoints INTEGER DEFAULT 0,
+            picksixcorrect INTEGER DEFAULT 0,
+            totalpicksix INTEGER DEFAULT 0
         );
     `)
 
@@ -133,15 +138,32 @@ try {
     `)
 
     await client.query(`
-    CREATE TABLE posts(
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
-        message VARCHAR(255) NOT NULL,
-        time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        likes INTEGER DEFAULT 0,
-        names VARCHAR(255)[]
-    );
-`);
+        CREATE TABLE posts(
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+            message VARCHAR(255) NOT NULL,
+            time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            likes INTEGER DEFAULT 0,
+            names VARCHAR(255)[]
+        );
+    `)
+    
+        await client.query(`
+        CREATE TABLE picksix(
+            id SERIAL PRIMARY KEY,
+            weeklyid INTEGER REFERENCES weeklypicks(id) ON DELETE CASCADE,
+            picknumber INTEGER DEFAULT 1, 
+            gameid INTEGER REFERENCES games(id) ON DELETE CASCADE,
+            type VARCHAR(255) NOT NULL,
+            bet VARCHAR(255) NOT NULL,
+            text VARCHAR(255) NOT NULL,
+            outcome VARCHAR(255) DEFAULT 'tbd',
+            outcometext VARCHAR(255) DEFAULT 'tbd',
+            result VARCHAR(255) DEFAULT 'tbd',
+            statsupdated BOOLEAN DEFAULT FALSE,
+            UNIQUE (weeklyid, picknumber, gameid, type)
+        );
+    `);
 
     console.log('Finished building tables!')
 } catch (error) {

@@ -4,6 +4,7 @@ const usersRouter = require('./users');
 const gamesRouter = require('./games');
 const picksRouter = require('./picks');
 const parlaysRouter = require('./parlays');
+const picksixRouter = require('./picksix');
 const potRouter = require('./pot');
 const postsRouter = require('./posts');
 const jwt = require('jsonwebtoken');
@@ -40,6 +41,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/games', gamesRouter);
 apiRouter.use('/picks', picksRouter);
 apiRouter.use('/parlays', parlaysRouter);
+apiRouter.use('/picksix', picksRouter);
 apiRouter.use('/pot', potRouter);
 apiRouter.use('/posts', postsRouter);
 
