@@ -116,7 +116,7 @@ picksixRouter.patch('/picksix/id/updatePicksixPick/:pickId', requireUser, async 
 
 picksixRouter.patch('/picksix/id/updateWeeklyPick/:weeklyPickId', requireAdmin, async (req, res, next) => {
     const { weeklyPickId } = req.params;
-    const { week, active, betscorrect, totalbets, lockscorrect, totallocks, parlayscorrect, totalparlays, totalpoints } = req.body;
+    const { week, active, betscorrect, totalbets, lockscorrect, totallocks, parlayscorrect, totalparlays, totalpoints, totalpicksix, picksixcorrect } = req.body;
     let updateFields = {}
 
     if (week) {
@@ -154,6 +154,16 @@ picksixRouter.patch('/picksix/id/updateWeeklyPick/:weeklyPickId', requireAdmin, 
     if (totalparlays) {
         updateFields.totalparlays = totalparlays;
     }
+
+    if (totalpicksix) {
+        updateFields.totalpicksix = totalpicksix;
+    }
+
+    if (picksixcorrect) {
+        updateFields.picksixcorrect = picksixcorrect;
+    }
+    
+    
     
     try {
         const weeklypick = await getWeeklyPickById(weeklyPickId)
@@ -191,13 +201,13 @@ picksixRouter.patch('/updateResults/pick1', requireAdmin, async (req, res, next)
     
                     allPicksixOnePicks.forEach(async (picksixPick) => {
                         if (picksixPick.result === "HIT") {
-                            parlayshit++;
+                            pickshit++;
                         } else if (picksixPick.result === "MISS") {
-                            parlaysmiss++;
+                            picksmiss++;
                         } else if (picksixPick.result === "PUSH") {
-                            parlayspush++
+                            pickspush++
                         } else if (picksixPick.result === "tbd") {
-                            parlaystbd++
+                            pickstbd++
                         }
                     })
 
@@ -207,20 +217,20 @@ picksixRouter.patch('/updateResults/pick1', requireAdmin, async (req, res, next)
                         picksixOnePicks.forEach(async (picksixPick) => {
                             await updatePicksixPick(picksixPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointslost, totalparlays: weeklyPick.totalparlays + 1})
-                        await updateUser(user.id, {totalpoints: user.totalpoints + pointslost, totalparlays: user.totalparlays + 1})
+                        await updateWeeklyPick(weeklyPick.id, {totalpicksix: weeklyPick.totalpicksix + 1})
+                        await updateUser(user.id, {totalpicksix: user.totalpicksix + 1})
                     } else if (pickspush > 0) {
                         picksixOnePicks.forEach(async (picksixPick) => {
                             await updatePicksixPick(picksixPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalparlays: weeklyPick.totalparlays + 1})
-                        await updateUser(user.id, {totalparlays: user.totalparlays + 1})
+                        await updateWeeklyPick(weeklyPick.id, {totalpicksix: weeklyPick.totalpicksix + 1})
+                        await updateUser(user.id, {totalpicksix: user.totalpicksix + 1})
                     } else if (pickshit === allPicksixOnePicks.length) {
                         picksixOnePicks.forEach(async (picksixPick) => {
                             await updatePicksixPick(picksixPick.id, {statsupdated: true})
                         })
-                        await updateWeeklyPick(weeklyPick.id, {totalpoints: weeklyPick.totalpoints + pointsearned, totalparlays: weeklyPick.totalparlays + 1, parlayscorrect: weeklyPick.parlayscorrect + 1})
-                        await updateUser(user.id, {totalpoints: user.totalpoints + pointsearned, parlayscorrect: user.parlayscorrect + 1, totalparlays: user.totalparlays + 1})
+                        await updateWeeklyPick(weeklyPick.id, {totalpicksix: weeklyPick.totalpicksix + 1, picksixcorrect: weeklyPick.picksixcorrect + 1})
+                        await updateUser(user.id, {picksixcorrect: user.picksixcorrect + 1, totalpicksix: user.totalpicksix + 1})
                     }
                     
                 }

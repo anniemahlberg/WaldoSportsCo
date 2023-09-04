@@ -194,6 +194,7 @@ try {
     client.connect();
     await dropTables();
     await createTables();
+    await alterTables();
 } catch (error) {
     throw error;
 }
