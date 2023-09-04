@@ -237,7 +237,7 @@ picksixRouter.patch('/updateResults/pick1', requireAdmin, async (req, res, next)
             })
         }
 
-        res.send({message: "Picksix points added!"})
+        res.send({message: "Picksix points are added!"})
     } catch ({name, message}) {
         next({name, message})
     }
