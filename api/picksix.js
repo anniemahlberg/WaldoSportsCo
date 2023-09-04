@@ -190,7 +190,7 @@ picksixRouter.patch('/updateResults/pick1', requireAdmin, async (req, res, next)
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
                 const allPicksixOnePicks = await getPicksixPicksByPickNumberAndWeeklyId(1, weeklyPick.id);
-                const picksixOnePicks = allPickOnePicks.filter(picksixPick => picksixPick.statsupdated === false)
+                const picksixOnePicks = allPicksixOnePicks.filter(picksixPick => picksixPick.statsupdated === false)
 
                 if (allPicksixOnePicks.length) {
     
