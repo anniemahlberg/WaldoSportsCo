@@ -41,7 +41,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/games', gamesRouter);
 apiRouter.use('/picks', picksRouter);
 apiRouter.use('/parlays', parlaysRouter);
-apiRouter.use('/picksix', picksRouter);
+apiRouter.use('/picksix', picksixRouter);
 apiRouter.use('/pot', potRouter);
 apiRouter.use('/posts', postsRouter);
 
