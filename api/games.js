@@ -1,6 +1,28 @@
 const express = require('express');
 const gamesRouter = express.Router();
-const { getAllGames, createGame, updateGame, getGameById, getPicksByGameIdAndType, addOutcomeToPick, getAllGamesByWeek, getAllActiveGames, getWeeklyPickById, updateUser, updateWeeklyPick, getUserById, getUserByUsername, deleteGame, getAllWeeklyPicksByWeek, getParlayPicksByGameIdAndType, addOutcomeToParlayPick, getParlayPicksByWeeklyId, getAllActiveWeeklyPicks, getAllActiveWeeklyPicksByWeek } = require('../db');
+const { getAllGames,
+        createGame, 
+        updateGame, 
+        getGameById,
+        getPicksByGameIdAndType, 
+        addOutcomeToPick, 
+        getAllGamesByWeek, 
+        getAllActiveGames, 
+        getWeeklyPickById, 
+        updateUser, 
+        updateWeeklyPick, 
+        getUserById, 
+        getUserByUsername, 
+        deleteGame, 
+        getAllWeeklyPicksByWeek,
+        getParlayPicksByGameIdAndType, 
+        addOutcomeToParlayPick, 
+        getParlayPicksByWeeklyId, 
+        getAllActiveWeeklyPicks, 
+        getAllActiveWeeklyPicksByWeek,
+        getPicksixPicksByGameIdAndType,
+        addOutcomeToPicksixPick
+    } = require('../db');
 const { requireAdmin } = require('./utils');
 
 gamesRouter.get('/', async (req, res) => {
@@ -370,6 +392,56 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                         }
 
                         let updatedParlay = await addOutcomeToParlayPick(parlay.id, updateFieldsForParlay);
+                        updatedParlays.push(updatedParlay)
+
+                    })
+                }
+            }
+
+            if ((game.chalk || game.dog) && lineoutcome) {
+                const picksixToUpdate = await getPicksixPicksByGameIdAndType(gameId, "line")
+                if (picksixToUpdate) {
+                    let updatedParlays = []
+                    picksixToUpdate.forEach(async parlay => {
+                        let updateFieldsForParlay = {
+                            outcome: lineoutcome,
+                            outcometext: lineoutcometext
+                        }
+
+                        if (parlay.bet === lineoutcome) {
+                            updateFieldsForParlay.result = "HIT"
+                        } else if (lineoutcome === "push") {
+                            updateFieldsForParlay.result = "PUSH"
+                        } else {
+                            updateFieldsForParlay.result = "MISS"
+                        }
+
+                        let updatedParlay = await addOutcomeToPicksixPick(parlay.id, updateFieldsForParlay);
+                        updatedParlays.push(updatedParlay)
+
+                    })
+                }
+            }
+
+            if ((game.over || game.under) && totalpointsoutcome) {
+                const picksixToUpdate = await getPicksixPicksByGameIdAndType(gameId, "totalpoints")
+                if (picksixToUpdate) {
+                    let updatedParlays = []
+                    picksixToUpdate.forEach(async parlay => {
+                        let updateFieldsForParlay = {
+                            outcome: totalpointsoutcome,
+                            outcometext: totalpointsoutcometext
+                        }
+
+                        if (parlay.bet === totalpointsoutcome) {
+                            updateFieldsForParlay.result = "HIT"
+                        } else if (totalpointsoutcome === "push") {
+                            updateFieldsForParlay.result = "PUSH"
+                        } else {
+                            updateFieldsForParlay.result = "MISS"
+                        }
+
+                        let updatedParlay = await addOutcomeToPicksixPick(parlay.id, updateFieldsForParlay);
                         updatedParlays.push(updatedParlay)
 
                     })
