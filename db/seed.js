@@ -199,8 +199,8 @@ async function testDB() {
 try {
     console.log('STARTING DATABASE');
 
-    // await createUser({username: 'StankyLines', password: 'SLObaby22!', firstname: 'Annie', lastname: 'Mahlberg', email: 'amahlberg4@gmail.com', venmo: 'AnnieMahlberg'})
-    // await updateUser(1, {admin: true})
+    await createUser({username: 'StankyLines', password: 'SLObaby22!', firstname: 'Annie', lastname: 'Mahlberg', email: 'amahlberg4@gmail.com', venmo: 'AnnieMahlberg'})
+    await updateUser(1, {admin: true})
     console.log('testing...')
 } catch (error) {
     console.error("Error testing database!");
