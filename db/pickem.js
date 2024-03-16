@@ -2,14 +2,14 @@ const client = require('./client')
 
 async function createPickEmPick({ weeklyid, gameid, type, bet, text}) {
     try {
-        const { rows: [ picksixPick ] } = await client.query(`
-            INSERT INTO picksix(weeklyid, gameid, type, bet, text)
+        const { rows: [ pickemPick ] } = await client.query(`
+            INSERT INTO pickem(weeklyid, gameid, type, bet, text)
             VALUES ($1, $2, $3, $4, $5)
             ON CONFLICT (weeklyid, gameid, type) DO NOTHING
             RETURNING *;
         `, [weeklyid, gameid, type, bet, text]);
 
-        return picksixPick;
+        return pickemPick;
     } catch (error) {
         throw error;
     }

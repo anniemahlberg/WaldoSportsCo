@@ -44,31 +44,6 @@ async function createTables() {
 async function alterTables() {
     try {
         console.log('Starting to alter tables...')
-        await client.query(`
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS totalpickem  INTEGER DEFAULT 0;
-
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS totalcorrectpickem INTEGER DEFAULT 0;
-
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS pickemwins  INTEGER DEFAULT 0;
-
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS currentpickemwinner BOOLEAN DEFAULT FALSE;
-
-            ALTER TABLE weeklypicks
-            ADD COLUMN IF NOT EXISTS totalpickem  INTEGER DEFAULT 0;
-
-            ALTER TABLE weeklypicks
-            ADD COLUMN IF NOT EXISTS totalcorrectpickem INTEGER DEFAULT 0;
-
-            ALTER TABLE weeklypicks
-            ADD COLUMN IF NOT EXISTS pickemwins  INTEGER DEFAULT 0;
-
-            ALTER TABLE weeklypicks
-            ADD COLUMN IF NOT EXISTS currentpickemwinner BOOLEAN DEFAULT FALSE;
-        `)
         console.log('Finished altering tables!')
     } catch (error) {
         console.error('Error altering tables!')
