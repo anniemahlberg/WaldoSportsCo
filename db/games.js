@@ -111,6 +111,11 @@ async function deleteGame(gameId) {
             DELETE FROM parlays
             WHERE gameid=$1
         `, [gameId])
+
+        await client.query(`
+            DELETE FROM pickem
+            WHERE gameid=$1
+        `, [gameId])        
         
         const { rows: [game] } = await client.query(`
             DELETE FROM games

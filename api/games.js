@@ -21,7 +21,9 @@ const { getAllGames,
         getAllActiveWeeklyPicks, 
         getAllActiveWeeklyPicksByWeek,
         getPicksixPicksByGameIdAndType,
-        addOutcomeToPicksixPick
+        addOutcomeToPicksixPick,
+        getPickEmPicksByGameIdAndType,
+        addOutcomeToPickEmPick
     } = require('../db');
 const { requireAdmin } = require('./utils');
 
@@ -205,7 +207,7 @@ gamesRouter.patch('/:gameId', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next) => {
     const { gameId } = req.params;
-    const { totalpointsoutcome, lineoutcome, totalpointsoutcometext, lineoutcometext } = req.body;
+    const { totalpointsoutcome, lineoutcome, totalpointsoutcometext, lineoutcometext, moneylineoutcome, moneylineoutcometext } = req.body;
     let updateFields = {};
 
     if (totalpointsoutcome) {
@@ -213,6 +215,10 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
     }
     if (lineoutcome) {
         updateFields.lineoutcome = lineoutcome;
+    }
+
+    if (moneylineoutcome) {
+        updateFields.moneylineoutcome = moneylineoutcome
     }
 
     try {
@@ -447,7 +453,32 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                     })
                 }
             }
-            
+
+            if ((game.chalk || game.dog) && moneylineoutcome) {
+                const pickemToUpdate = await getPickEmPicksByGameIdAndType(gameId, "moneyline")
+                if (pickemToUpdate) {
+                    let updatedPickEms = []
+                    pickemToUpdate.forEach(async pickem => {
+                        let updateFieldsForPickEm = {
+                            outcome: moneylineoutcome,
+                            outcometext: moneylineoutcometext
+                        }
+
+                        if (pickem.bet === moneylineoutcome) {
+                            updateFieldsForPickEm.result = "HIT"
+                        } else if (moneylineoutcome === "push") {
+                            updateFieldsForPickEm.result = "PUSH"
+                        } else {
+                            updateFieldsForPickEm.result = "MISS"
+                        }
+
+                        let updatedPickEm = await addOutcomeToPickEmPick(pickem.id, updateFieldsForPickEm);
+                        updatedPickEms.push(updatedPickEm)
+
+                    })
+                }
+            }            
+
             res.send({ game: updatedGame });
 
         } else if (game) {
