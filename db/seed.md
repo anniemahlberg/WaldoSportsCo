@@ -165,6 +165,42 @@ try {
         );
     `);
 
+            await client.query(`
+        CREATE TABLE weeklypickem(
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+            week INTEGER NOT NULL,
+            active BOOLEAN DEFAULT true,
+            betscorrect INTEGER DEFAULT 0,
+            totalbets INTEGER DEFAULT 0,
+            lockscorrect INTEGER DEFAULT 0,
+            totallocks INTEGER DEFAULT 0,
+            parlayscorrect INTEGER DEFAULT 0,
+            totalparlays INTEGER DEFAULT 0,
+            totalpoints INTEGER DEFAULT 0,
+            picksixcorrect INTEGER DEFAULT 0,
+            totalpicksix INTEGER DEFAULT 0
+        );
+    `)
+
+    await client.query(`
+        CREATE TABLE pickem(
+            id SERIAL PRIMARY KEY,
+            weeklyid INTEGER REFERENCES weeklypickem(id) ON DELETE CASCADE,
+            gameid INTEGER REFERENCES games(id) ON DELETE CASCADE,
+            type VARCHAR(255) NOT NULL,
+            bet VARCHAR(255) NOT NULL,
+            text VARCHAR(255) NOT NULL,
+            outcome VARCHAR(255) DEFAULT 'tbd',
+            outcometext VARCHAR(255) DEFAULT 'tbd',
+            worth INTEGER DEFAULT 1,
+            pointsawarded INTEGER DEFAULT 0,
+            statsupdated BOOLEAN DEFAULT FALSE,
+            UNIQUE (weeklyid, gameid, type)
+        );
+    `)
+
+
     console.log('Finished building tables!')
 } catch (error) {
     console.error('Error building tables!')

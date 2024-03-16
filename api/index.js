@@ -7,6 +7,7 @@ const parlaysRouter = require('./parlays');
 const picksixRouter = require('./picksix');
 const potRouter = require('./pot');
 const postsRouter = require('./posts');
+const pickEmRouter = require('./pickem');
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../db');
 const { JWT_SECRET } = process.env;
@@ -44,6 +45,7 @@ apiRouter.use('/parlays', parlaysRouter);
 apiRouter.use('/picksix', picksixRouter);
 apiRouter.use('/pot', potRouter);
 apiRouter.use('/posts', postsRouter);
+apiRouter.use('/pickem', pickEmRouter);
 
 apiRouter.use((error, req, res, next) => {
     res.send({

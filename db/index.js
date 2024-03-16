@@ -5,5 +5,6 @@ module.exports = {
     ...require('./parlays'),
     ...require('./pot'),
     ...require('./posts'),
-    ...require('./picksix')
+    ...require('./picksix'),
+    ...require('./pickem')
 }
