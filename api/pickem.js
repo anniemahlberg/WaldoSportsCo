@@ -161,7 +161,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                     pickEmPicks.forEach(async (pickEmPick) => {
                         if (pickEmPick.bet === pickEmPick.outcome) {
                             await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 1})
-                            await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1, totalcorrectpickem: weeklyPick.totalcorrectpickem + 1})
+                            await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1, totalcorrectpickem: weeklyPick.totalcorrectpickem + 1, totalpickempoints: weeklyPick.totalpickempoints + 1})
                             await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + 1, totalpickem: user.totalpickem + 1})
                             
                         } else if (pickEmPick.outcome != 'tbd') {
