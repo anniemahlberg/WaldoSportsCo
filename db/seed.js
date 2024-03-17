@@ -28,7 +28,7 @@ async function alterTables() {
         console.log('Starting to alter tables...')
         await client.query(`
         ALTER TABLE games
-        ALTER active DEFAULT false;
+        ALTER active SET DEFAULT false;
     `)
         console.log('Finished altering tables!')
     } catch (error) {
