@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const usersRouter = express.Router();
-const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats, updateUser, deleteUser, makeUserCurrentWinner } = require('../db');
+const { getAllUsers, getUserByUsername, createUser, getUserById, getAllUserStats, updateUser, deleteUser, makeUserCurrentWinner, makeUserCurrentPickEmWinner } = require('../db');
 const { requireUser, requireAdmin } = require('./utils')
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
@@ -177,6 +177,27 @@ usersRouter.patch('/makeWinner/:userId', requireAdmin, async (req, res, next) =>
             const allUsers = await getAllUsers();
             allUsers.forEach(async (user) => await updateUser(user.id, {currentwinner: false}))
             await makeUserCurrentWinner(userId);
+            res.send({message: `You have made ${user.username} this week's winner!`})
+        } else {
+            next({
+                name: 'UserNotFoundError',
+                message: 'That user does not exist'
+            })
+        }
+    } catch ({name, message}) {
+        next({name, message})
+    }
+})
+
+usersRouter.patch('/makePickEmWinner/:userId', requireAdmin, async (req, res, next) => {
+    const { userId } = req.params;
+    const user = await getUserById(userId)
+
+    try {
+        if (user) {
+            const allUsers = await getAllUsers();
+            allUsers.forEach(async (user) => await updateUser(user.id, {currentpickemwinner: false}))
+            await makeUserCurrentPickEmWinner(userId);
             res.send({message: `You have made ${user.username} this week's winner!`})
         } else {
             next({
