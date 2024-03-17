@@ -152,36 +152,32 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
         const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
-                const weeklyPickTotal = weeklyPick.totalpickem
-                const weeklyPickPoints = weeklyPick.totalpickempoints
-                const weeklyPickCorrect = weeklyPick.totalcorrectpickem
                 const user = await getUserByUsername(weeklyPick.username)
                 const allPickEmPicks = await getPickEmPicksByWeeklyId(weeklyPick.id);
                 const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false)
-                let totalpickem1 = 0
-                let totalcorrectpickem1 = 0
-                let totalpickempoints1 = 0
+                let total = 0
+                let correct = 0
+                let points = 0
 
                 if (pickEmPicks.length) {
                     pickEmPicks.forEach(async (pickEmPick) => {
                         if (pickEmPick.bet === pickEmPick.outcome) {
-                            await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 1})
-                            totalpickem1++
-                            totalcorrectpickem1++
-                            totalpickempoints1++
+                            await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: pickEmPick.worth})
+                            total++
+                            correct++
+                            points++
                             
                         } else if (pickEmPick.outcome != 'tbd') {
-                            await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 0})
-                            totalpickem1++                            
+                            await updatePickEmPick(pickEmPick.id, {statsupdated: true})
+                            total++                            
                         }
                     })                    
                 }
-                console.log('TRY ONE correct: ', totalcorrectpickem1, 'total: ', totalpickem1, 'points: ',totalpickempoints1)
-                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPickCorrect + totalcorrectpickem1, totalpickem: weeklyPickTotal + totalcorrectpickem1, totalpickempoints: weeklyPickPoints + totalpickempoints1})
-                console.log('TRY TWO correct: ', totalcorrectpickem1, 'total: ', totalpickem1, 'points: ',totalpickempoints1)
-                await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + totalcorrectpickem1, totalpickem: user.totalpickem + totalpickem1})
-                console.log('TRY THREE correct: ', totalcorrectpickem1, 'total: ', totalpickem1, 'points: ',totalpickempoints1)
-
+                
+                console.log('TRY ONE correct: ', correct, 'total: ', total, 'points: ',points)
+                await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + correct, totalpickem: user.totalpickem + total})
+                console.log('TRY TWO correct: ', correct, 'total: ', total, 'points: ',points)
+                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
             })
         }
 
