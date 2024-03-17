@@ -174,9 +174,8 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                     })                    
                 }
                 
-                console.log('TRY ONE correct: ', correct, 'total: ', total, 'points: ',points)
+                await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem, totalpickem: user.totalpickem})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + correct, totalpickem: user.totalpickem + total})
-                console.log('TRY TWO correct: ', correct, 'total: ', total, 'points: ',points)
                 await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
             })
         }
