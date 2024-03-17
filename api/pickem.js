@@ -179,8 +179,6 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
             })
         }
-
-        res.send({message: "Pickem points are added!"})
     } catch ({name, message}) {
         next({name, message})
     }

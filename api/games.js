@@ -470,7 +470,7 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                 }
             }            
 
-            res.send({ game: updatedGame });
+            res.send({message: 'Games are updated!'});
 
         } else if (game) {
             next({
