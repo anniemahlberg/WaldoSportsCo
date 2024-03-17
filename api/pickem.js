@@ -152,6 +152,9 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
         const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
+                const weeklyPickTotal = weeklyPick.totalpickem
+                const weeklyPickPoints = weeklyPick.totalpickempoints
+                const weeklyPickCorrect = weeklyPick.totalcorrectpickem
                 const user = await getUserByUsername(weeklyPick.username)
                 const allPickEmPicks = await getPickEmPicksByWeeklyId(weeklyPick.id);
                 const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false)
@@ -174,7 +177,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                     })                    
                 }
 
-                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: 1, totalpickem: 2, totalpickempoints: 5})
+                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPickCorrect + totalcorrectpickem1, totalpickem: weeklyPickTotal + totalcorrectpickem1, totalpickempoints: weeklyPickPoints + totalpickempoints1})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + totalcorrectpickem1, totalpickem: user.totalpickem + totalpickem1})
             })
         }
