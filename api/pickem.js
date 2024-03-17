@@ -156,52 +156,26 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 const allPickEmPicks = await getPickEmPicksByWeeklyId(weeklyPick.id);
                 const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false)
 
-                if (allPickEmPicks.length) {
-    
-                    let pickshit = 0;
-                    let picksmiss = 0;
-                    let pickstbd = 0;
-                    let pickspush = 0;
-    
-                    allPickEmPicks.forEach(async (picksixPick) => {
-                        if (pickEmPick.result === "HIT") {
-                            pickshit++;
-                        } else if (pickEmPick.result === "MISS") {
-                            picksmiss++;
-                        } else if (pickEmPick.result === "PUSH") {
-                            pickspush++
-                        } else if (pickEmPick.result === "tbd") {
-                            pickstbd++
+                if (pickEmPicks.length) {
+        
+                    pickEmPicks.forEach(async (pickEmPick) => {
+                        if (pickEmPick.bet === pickEmPick.outcome) {
+                            await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 1})
+                            await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1, totalcorrectpickem: weeklyPick.totalcorrectpickem + 1})
+                            await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + 1, totalpickem: user.totalpickem + 1})
+                            
+                        } else if (pickEmPick.outcome != 'tbd') {
+                            await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 0})
+                            await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1})
+                            await updateUser(user.id, {totalpickem: user.totalpickem + 1})
+                            
                         }
-                    })
-
-                    if (pickstbd > 0 || !pickEmPicks.length) {
-                        return;
-                    } else if (picksmiss > 0) {
-                        pickEmPicks.forEach(async (pickEmPick) => {
-                            await updatePickEmPick(pickEmPick.id, {statsupdated: true})
-                        })
-                        await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1})
-                        await updateUser(user.id, {totalpickem: user.totalpickem + 1})
-                    } else if (pickspush > 0) {
-                        pickEmPicks.forEach(async (pickEmPick) => {
-                            await updatePickEmPick(pickEmPick.id, {statsupdated: true})
-                        })
-                        await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1})
-                        await updateUser(user.id, {totalpickem: user.totalpickem + 1})
-                    } else if (pickshit === allPickEmPicks.length) {
-                        pickEmPicks.forEach(async (pickEmPick) => {
-                            await updatePickEmPick(pickEmPick.id, {statsupdated: true})
-                        })
-                        await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + 1, totalcorrectpickem: weeklyPick.totalcorrectpickem + 1})
-                        await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + 1, totalpickem: user.totalpickem + 1})
-                    }
-                    
+                    })                    
                 }
             })
         }
 
-        res.send({message: "Picksix points are added!"})
+        res.send({message: "Pickem points are added!"})
     } catch ({name, message}) {
         next({name, message})
     }

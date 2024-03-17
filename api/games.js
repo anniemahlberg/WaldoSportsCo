@@ -464,17 +464,8 @@ gamesRouter.patch('/updateResults/:gameId', requireAdmin, async (req, res, next)
                             outcometext: moneylineoutcometext
                         }
 
-                        if (pickem.bet === moneylineoutcome) {
-                            updateFieldsForPickEm.result = "HIT"
-                        } else if (moneylineoutcome === "push") {
-                            updateFieldsForPickEm.result = "PUSH"
-                        } else {
-                            updateFieldsForPickEm.result = "MISS"
-                        }
-
                         let updatedPickEm = await addOutcomeToPickEmPick(pickem.id, updateFieldsForPickEm);
                         updatedPickEms.push(updatedPickEm)
-
                     })
                 }
             }            
