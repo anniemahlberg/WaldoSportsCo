@@ -27,8 +27,8 @@ async function alterTables() {
     try {
         console.log('Starting to alter tables...')
         await client.query(`
-        ALTER TABLE games
-        ADD COLUMN IF NOT EXISTS moneylineoutcome varchar(255) DEFAULT 'tbd';
+        ALTER TABLE weeklypicks
+        ADD COLUMN IF NOT EXISTS totalpickempoints INTEGER DEFAULT 0;
     `)
         console.log('Finished altering tables!')
     } catch (error) {
