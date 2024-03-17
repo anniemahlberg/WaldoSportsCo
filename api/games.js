@@ -67,7 +67,7 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
     try {
         if (req.user.username) {
             const game = await createGame({
-                week, hometeam, awayteam, level, date, time, primetime, duration, over, under, chalk, dog, totalpoints, favoredteam, line
+                week, hometeam, awayteam, level, date, time, primetime, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active: false
             });
     
             res.send({ message: 'you have added a new game!', game});
@@ -84,11 +84,12 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
 
 gamesRouter.patch('/byWeek/:week', requireAdmin, async (req, res, next) => {
     const { week } = req.params;
+    const { type } = req.body;
     const games = await getAllGamesByWeek(week);
     const weeklyPicks = await getAllWeeklyPicksByWeek(week);
     
     try {
-        if (games && weeklyPicks) {
+        if (games && weeklyPicks && type === 'deactivate') {
             games.forEach(async (game) => {
                 await updateGame(game.id, {active: false})
             })
@@ -97,7 +98,13 @@ gamesRouter.patch('/byWeek/:week', requireAdmin, async (req, res, next) => {
                 await updateWeeklyPick(weeklyPick.id, {active: false})
             })
 
-            res.send({ message: `You have deactivated all games from week ${week}. Let's' start a new week!`})
+            res.send({ message: `You have deactivated all games from week ${week}. Let's start a new week!`})
+        } else if (games && weeklyPicks && type === 'activate') {
+            games.forEach(async (game) => {
+                await updateGame(game.id, {active: true})
+            })
+
+            res.send({ message: `You have activated all games from week ${week}. Let's play!!`})
         }
     } catch ({name, message}) {
         next({name, message})
