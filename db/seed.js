@@ -27,8 +27,8 @@ async function alterTables() {
     try {
         console.log('Starting to alter tables...')
         await client.query(`
-        ALTER TABLE weeklypicks
-        ADD COLUMN IF NOT EXISTS totalpickempoints INTEGER DEFAULT 0;
+        ALTER TABLE games
+        ALTER active DEFAULT false;
     `)
         console.log('Finished altering tables!')
     } catch (error) {

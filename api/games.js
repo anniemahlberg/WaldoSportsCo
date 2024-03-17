@@ -67,7 +67,7 @@ gamesRouter.post('/add', requireAdmin, async (req, res, next) => {
     try {
         if (req.user.username) {
             const game = await createGame({
-                week, hometeam, awayteam, level, date, time, primetime, duration, over, under, chalk, dog, totalpoints, favoredteam, line, active: false
+                week, hometeam, awayteam, level, date, time, primetime, duration, over, under, chalk, dog, totalpoints, favoredteam, line
             });
     
             res.send({ message: 'you have added a new game!', game});
