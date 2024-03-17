@@ -118,7 +118,7 @@ async function getUserByUsername(username) {
 async function getAllUserStats() {
     try {
         const { rows: users } = await client.query(`
-            SELECT username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints, parlayscorrect, totalparlays, wins, currentwinner, totalcorrectpickem, totalpickem, totalpickempoints, pickemwins
+            SELECT username, betscorrect, totalbets, lockscorrect, totallocks, totalpoints, parlayscorrect, totalparlays, wins, currentwinner, totalcorrectpickem, totalpickem, totalpickempoints, pickemwins, currentpickemwinner
             FROM users
             ORDER BY id;
         `)
