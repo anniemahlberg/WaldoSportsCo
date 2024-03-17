@@ -155,27 +155,27 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 const user = await getUserByUsername(weeklyPick.username)
                 const allPickEmPicks = await getPickEmPicksByWeeklyId(weeklyPick.id);
                 const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false)
-                let totalpickem = 0
-                let totalcorrectpickem = 0
-                let totalpickempoints = 0
+                let totalpickem1 = 0
+                let totalcorrectpickem1 = 0
+                let totalpickempoints1 = 0
 
                 if (pickEmPicks.length) {
                     pickEmPicks.forEach(async (pickEmPick) => {
                         if (pickEmPick.bet === pickEmPick.outcome) {
                             await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 1})
-                            totalpickem++
-                            totalcorrectpickem++
-                            totalpickempoints++
+                            totalpickem1++
+                            totalcorrectpickem1++
+                            totalpickempoints1++
                             
                         } else if (pickEmPick.outcome != 'tbd') {
                             await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: 0})
-                            totalpickem++                            
+                            totalpickem1++                            
                         }
                     })                    
                 }
 
-                await updateWeeklyPick(weeklyPick.id, {totalpickem: weeklyPick.totalpickem + totalpickem, totalcorrectpickem: weeklyPick.totalcorrectpickem + totalcorrectpickem})
-                await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + totalcorrectpickem, totalpickem: user.totalpickem + totalpickem})
+                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + totalcorrectpickem1, totalpickem: weeklyPick.totalpickem + totalpickem1, totalpickempoints: weeklyPick.totalpickempoints + totalpickempoints1})
+                await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + totalcorrectpickem1, totalpickem: user.totalpickem + totalpickem1})
             })
         }
 
