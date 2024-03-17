@@ -174,7 +174,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                     })                    
                 }
 
-                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + totalcorrectpickem1, totalpickem: weeklyPick.totalpickem + totalpickem1, totalpickempoints: weeklyPick.totalpickempoints + totalpickempoints1})
+                await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: 1, totalpickem: 2, totalpickempoints: 5})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + totalcorrectpickem1, totalpickem: user.totalpickem + totalpickem1})
             })
         }
