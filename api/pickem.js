@@ -150,7 +150,6 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
 
     try {
         const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
-        console.log('number of times: ' + allweeklypicks.length)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
@@ -178,10 +177,10 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem, totalpickem: user.totalpickem})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + correct, totalpickem: user.totalpickem + total})
                 await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
+                res.send({message: "Pickem points added!"})
             })
         }
-        
-        res.send({message: "Pickem points added!"})
+        res.send({message: "NO updates - All pickem picks are already updated"})
     } catch ({name, message}) {
         next({name, message})
     }
