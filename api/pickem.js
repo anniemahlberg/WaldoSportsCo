@@ -150,6 +150,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
 
     try {
         const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
+        console.log('number of times: ' + allweeklypicks.length)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
                 const user = await getUserByUsername(weeklyPick.username)
@@ -158,7 +159,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 let total = 0
                 let correct = 0
                 let points = 0
-                console.log('user: ' + user + 'all picks length: ' + allPickEmPicks.length + 'picks length ' + pickEmPicks.length)
+                console.log('user: ' + user.username + 'all picks length: ' + allPickEmPicks.length + 'picks length ' + pickEmPicks.length)
 
                 if (pickEmPicks.length) {
                     pickEmPicks.forEach(async (pickEmPick) => {
