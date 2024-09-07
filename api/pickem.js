@@ -159,7 +159,6 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 let total = 0
                 let correct = 0
                 let points = 0
-                console.log('user: ' + user.username + 'all picks length: ' + allPickEmPicks.length + 'picks length ' + pickEmPicks.length)
 
                 if (pickEmPicks.length) {
                     pickEmPicks.forEach(async (pickEmPick) => {
@@ -174,12 +173,15 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                         }
                     })                    
                     
+                }
+
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem, totalpickem: user.totalpickem})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + correct, totalpickem: user.totalpickem + total})
                 await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
-                }
             })
         }
+        
+        res.send({message: "Pickem points added!"})
     } catch ({name, message}) {
         next({name, message})
     }
