@@ -149,6 +149,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
     const { week } = req.body;
 
     try {
+        console.log('here')
         const allweeklypicks = await getAllActiveWeeklyPicksByWeek(week)
         if (allweeklypicks) {
             allweeklypicks.forEach(async (weeklyPick) => {
