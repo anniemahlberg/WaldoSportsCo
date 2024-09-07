@@ -163,6 +163,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 let points = 0
 
                 if (pickEmPicks.length) {
+                    console.log('4')
                     pickEmPicks.forEach(async (pickEmPick) => {
                         if (pickEmPick.bet === pickEmPick.outcome) {
                             await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: pickEmPick.worth})
@@ -176,11 +177,12 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                         }
                     })                    
                 }
-                console.log('4')
+                console.log('5')
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem, totalpickem: user.totalpickem})
                 await updateUser(user.id, {totalcorrectpickem: user.totalcorrectpickem + correct, totalpickem: user.totalpickem + total})
                 await updateWeeklyPick(weeklyPick.id, {totalcorrectpickem: weeklyPick.totalcorrectpickem + correct, totalpickem: weeklyPick.totalpickem + total, totalpickempoints: weeklyPick.totalpickempoints + points})
             })
+            console.log('6')
         }
     } catch ({name, message}) {
         next({name, message})
