@@ -161,10 +161,12 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 let total = 0
                 let correct = 0
                 let points = 0
+                console.log('pickEmPicks' + pickEmPicks)
 
                 if (pickEmPicks.length) {
-                    console.log('4')
+                    console.log('pickEmPicks.length',pickEmPicks.length)
                     pickEmPicks.forEach(async (pickEmPick) => {
+                        console.log('bet' + pickEmPick.bet + ' outcome' + pickEmPick.outcome)
                         if (pickEmPick.bet === pickEmPick.outcome) {
                             await updatePickEmPick(pickEmPick.id, {statsupdated: true, pointsawarded: pickEmPick.worth})
                             total++
