@@ -157,7 +157,7 @@ pickEmRouter.patch('/updateResults/pickem', requireAdmin, async (req, res, next)
                 console.log('3')
                 const user = await getUserByUsername(weeklyPick.username)
                 const allPickEmPicks = await getPickEmPicksByWeeklyId(weeklyPick.id);
-                const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false)
+                const pickEmPicks = allPickEmPicks.filter(pickEmPick => pickEmPick.statsupdated === false && pickEmPick.outcome != 'tbd')
                 let total = 0
                 let correct = 0
                 let points = 0
